@@ -1,6 +1,13 @@
 package com.team9470;
 
 public class Constants {
+    public static class IndexerConstants{
+        public static final int INDEX_ID_1 = 19;
+        public static final int INDEX_ID_2 = 20;
+        public static final float BELT_FORWARD_VOLTAGE = 6;
+        public static final float BELT_BACKWARD_VOLTAGE = -6;
+
+    }
     public static class ClimberConstants{
         public static final int WINCH_ID_1 = 21;
         public static final int WINCH_ID_2 = 22;
