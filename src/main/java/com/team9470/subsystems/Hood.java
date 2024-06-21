@@ -4,5 +4,5 @@ package com.team9470.subsystems;
  * Shooter Hood
  *
  */
-public class ShooterDeploy {
+public class Hood {
 }

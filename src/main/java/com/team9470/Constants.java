@@ -19,5 +19,6 @@ public class Constants {
         public static final float FF_S = 0;
         public static final float FF_V = 0;
         public static final float PID_P = 0;
+        public static final float TOLERANCE = 0;
     }
 }
