@@ -11,4 +11,36 @@
     "backleft.json",
     "backright.json"
   ]
+  "physicalProperties": {
+    "optimalVoltage": 12,
+    "wheelGripCoefficientOfFriction": 1.19,
+    "currentLimit": {
+      "drive": 40,
+      "angle": 20
+    },
+    "conversionFactor": {
+      "angle": 16.8,
+      "drive": 0.047286787200699704
+    },
+    "rampRate": {
+      "drive": 0.25,
+      "angle": 0.25
+    }
+  },
+  "pidf": {
+    "drive": {
+      "p": 0.0020645,
+      "i": 0,
+      "d": 0,
+      "f": 0,
+      "iz": 0
+    },
+    "angle": {
+      "p": 0.01,
+      "i": 0,
+      "d": 0,
+      "f": 0,
+      "iz": 0
+    }
+  }
 }
