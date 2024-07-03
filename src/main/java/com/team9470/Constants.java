@@ -24,6 +24,11 @@ public class Constants {
         public static final int SHOOTER_PIVOT_ID_1 = 16;
         public static final float SHOOTER_SHOOT_VOLTAGE = 6;
         public static final float SHOOTER_RATIO = 24.0f/15;
+
+        public static final float K_G = 0;
+        public static final float K_S = 0;
+        public static final float K_A = 0;
+        public static final float K_V = 0;
         public static final float FF_S = 0;
         public static final float FF_V = 0;
         public static final float PID_P = 0;
