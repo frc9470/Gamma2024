@@ -21,20 +21,25 @@ public class Indexer extends SubsystemBase {
         index2.setIdleMode(CANSparkBase.IdleMode.kBrake);
         index2.setInverted(true);
     }
+
     //functions and commands
     public void setVoltage (Float voltage){
         index1.setVoltage(voltage);
         index2.setVoltage(voltage);
     }
+
     public Command beltForward (){
         return this.runEnd(() -> setVoltage(BELT_FORWARD_VOLTAGE), () -> setVoltage(0f));
     }
+
     public Command beltBackward (){
         return this.runEnd(() -> setVoltage(BELT_BACKWARD_VOLTAGE), () -> setVoltage(0f));
     }
+
     public Command beltStop (){
         return new InstantCommand(() -> setVoltage(0f));
     }
+
     public boolean hasNote(){
         return beamBreak.get();
     }

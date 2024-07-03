@@ -1,5 +1,7 @@
 package com.team9470;
 
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
     public static class IndexerConstants{
         public static final int INDEX_ID_1 = 19;
@@ -30,13 +32,19 @@ public class Constants {
     public static class IntakeConstants{
         public static final int INTAKE_ROLLER_ID = 15;
         public static final int INTAKE_ARM_ID = 14;
-        public static final float INTAKE_UP_VOLTAGE = 6;
-        public static final float INTAKE_DOWN_VOLTAGE = 6;
-        public static final float INTAKE_TAKE_IN_VOLTAGE = 6;
+        public static final int THROUGH_BORE = 1;
+        public static final float INTAKE_UP_VOLTAGE = 6.0f;
+        public static final float INTAKE_DOWN_VOLTAGE = 6.0f;
+        public static final float INTAKE_TAKE_IN_VOLTAGE = 6.0f;
         public static final float INTAKE_RATIO = 32.0f/18;
         public static final float FF_S = 0;
         public static final float FF_V = 0;
         public static final float PID_P = 0;
         public static final float TOLERANCE = 0;
+        public static final float ABSOLUTE_OFFSET = 0;
+    }
+
+    public static class SwerveConstants {
+        public static final double MAX_SPEED = Units.feetToMeters(16.6 * .8); // TODO: is 80% of free speed correct?
     }
 }

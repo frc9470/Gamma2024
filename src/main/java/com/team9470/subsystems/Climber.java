@@ -14,7 +14,7 @@ import static com.team9470.Constants.ClimberConstants.*;
  * Motor IDs = 21 and 22
  */
 
-public class Climber extends SubsystemBase {
+public class                                                                                                                                                                   Climber extends SubsystemBase {
     public final CANSparkMax winch1 = new CANSparkMax(WINCH_ID_1, CANSparkMax.MotorType.kBrushless);
     public final CANSparkMax winch2 = new CANSparkMax(WINCH_ID_2, CANSparkMax.MotorType.kBrushless);
     public Climber(){
