@@ -24,11 +24,6 @@ public class Constants {
         public static final int SHOOTER_PIVOT_ID_1 = 16;
         public static final float SHOOTER_SHOOT_VOLTAGE = 6;
         public static final float SHOOTER_RATIO = 24.0f/15;
-
-        public static final float K_G = 0;
-        public static final float K_S = 0;
-        public static final float K_A = 0;
-        public static final float K_V = 0;
         public static final float FF_S = 0;
         public static final float FF_V = 0;
         public static final float PID_P = 0;
@@ -38,15 +33,28 @@ public class Constants {
         public static final int INTAKE_ROLLER_ID = 15;
         public static final int INTAKE_ARM_ID = 14;
         public static final int THROUGH_BORE = 1;
-        public static final float INTAKE_UP_VOLTAGE = 6.0f;
-        public static final float INTAKE_DOWN_VOLTAGE = 6.0f;
         public static final float INTAKE_TAKE_IN_VOLTAGE = 6.0f;
         public static final float INTAKE_RATIO = 32.0f/18;
         public static final float FF_S = 0;
         public static final float FF_V = 0;
         public static final float PID_P = 0;
-        public static final float TOLERANCE = 0;
+        public static final float MAX_VELOCITY = 0;
+        public static final float MAX_ACCELERATION = 0;
         public static final float ABSOLUTE_OFFSET = 0;
+        public static final float UP_GOAL = 5;
+        public static final float DOWN_GOAL = 0;
+    }
+    public static class HoodConstants{
+        public static final int HOOD_ID = 16;
+        public static final int THROUGH_BORE = 1;
+        public static final float FF_S = 0;
+        public static final float FF_V = 0;
+        public static final float PID_P = 0;
+        public static final float MAX_VELOCITY = 0;
+        public static final float MAX_ACCELERATION = 0;
+        public static final float ABSOLUTE_OFFSET = 0;
+        public static final float UP_GOAL = 5;
+        public static final float DOWN_GOAL = 0;
     }
 
     public static class SwerveConstants {
