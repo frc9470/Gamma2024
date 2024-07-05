@@ -7,7 +7,6 @@ package com.team9470;
 
 import com.team9470.commands.IntakeNote;
 import com.team9470.subsystems.*;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,7 +17,7 @@ public class RobotContainer {
 
     private final Swerve swerve = new Swerve();
     private final Climber climber = new Climber();
-    private final IntakeDeploy intakeDeploy = new IntakeDeploy();
+    private final Hood intakeDeploy = new Hood();
     private final IntakeRollers intakeRollers = new IntakeRollers();
     private final Indexer indexer = new Indexer();
     public RobotContainer()
