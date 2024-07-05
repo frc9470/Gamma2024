@@ -53,7 +53,7 @@ public class Constants {
 
     public static class SwerveConstants {
         public static final double MAX_SPEED = Units.feetToMeters(16.6 * .8); // TODO: is 80% of free speed correct?
-        public static final double TOLERANCE = 2.5
+        public static final double TOLERANCE = 2.5;
     }
     
     public static class VisionConstants {
