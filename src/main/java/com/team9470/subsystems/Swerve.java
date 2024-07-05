@@ -1,11 +1,12 @@
 package com.team9470.subsystems;
 
-import com.team9470.Constants;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
+import static com.team9470.Constants.AutonConstants;
 import static com.team9470.Constants.SwerveConstants;
 
 public class Swerve extends SubsystemBase {
@@ -39,7 +41,21 @@ public class Swerve extends SubsystemBase {
     }
 
     private void configPathPlanner() {
-
+        AutoBuilder.configureHolonomic(
+                this::getPose,
+                this::resetOdometry,
+                this::getRobotVelocity,
+                this::setChassisSpeeds,
+                new HolonomicPathFollowerConfig(
+                        AutonConstants.TRANSLATION_PID,
+                        AutonConstants.ROTATION_PID,
+                        SwerveConstants.MAX_SPEED,
+                        swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
+                        new ReplanningConfig()
+                ),
+                this::isRedAlliance,
+                this
+        );
     }
 
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularSpeedX){
@@ -87,6 +103,11 @@ public class Swerve extends SubsystemBase {
                 rotation,
                 fieldRelative,
                 false); // Open loop is disabled since it shouldn't be used most of the time.
+
+    }
+
+    public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+        swerveDrive.drive(chassisSpeeds);
     }
 
     @Override
