@@ -11,7 +11,7 @@ import com.team9470.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
@@ -34,7 +34,13 @@ public class RobotContainer {
     
     
     private void configureBindings() {
-        swerve.setDefaultCommand(swerve.driveCommand(xboxController::getLeftX, xboxController::getLeftY, xboxController::getRightX));
+        swerve.setDefaultCommand(
+                swerve.driveCommand(
+                    () -> -xboxController.getLeftX(),
+                    () -> -xboxController.getLeftY(),
+                    () -> -xboxController.getRightX()
+                )
+        );
 
         xboxController.povUp().whileTrue(climber.climberUp());
         xboxController.povDown().whileTrue(climber.climberDown());
@@ -44,7 +50,7 @@ public class RobotContainer {
     
     public Command getAutonomousCommand()
     {
-        return Commands.print("No autonomous command configured");
+        return new InstantCommand();
     }
 }
 

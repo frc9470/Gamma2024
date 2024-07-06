@@ -48,7 +48,7 @@ public class Constants {
     }
 
     public static class SwerveConstants {
-        public static final double MAX_SPEED = Units.feetToMeters(16.6)*.9; // TODO: is 80% of free speed correct?
+        public static final double MAX_SPEED = Units.feetToMeters(16.6); // TODO: is 80% of free speed correct?
     }
 
     public static class AutonConstants {

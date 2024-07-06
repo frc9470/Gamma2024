@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -61,7 +62,7 @@ public class Swerve extends SubsystemBase {
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularSpeedX){
         return this.run(() ->
                 swerveDrive.drive(
-                        new Translation2d(translationX.getAsDouble(), translationY.getAsDouble()),
+                        new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(), translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
                         angularSpeedX.getAsDouble(),
                         true,
                         false
@@ -117,7 +118,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        super.simulationPeriodic();
+        SmartDashboard.putNumber("Y", getPose().getY());
     }
 
     /**
