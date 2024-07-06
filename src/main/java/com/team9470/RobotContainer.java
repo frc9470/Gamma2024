@@ -5,10 +5,13 @@
 
 package com.team9470;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.team9470.commands.IntakeNote;
 import com.team9470.subsystems.*;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
@@ -20,14 +23,24 @@ public class RobotContainer {
     private final Hood intakeDeploy = new Hood();
     private final IntakeRollers intakeRollers = new IntakeRollers();
     private final Indexer indexer = new Indexer();
+
+    private final SendableChooser<Command> autoChooser;
     public RobotContainer()
     {
         configureBindings();
+        autoChooser = AutoBuilder.buildAutoChooser("");
+        SmartDashboard.putData(autoChooser);
     }
     
     
     private void configureBindings() {
-        swerve.setDefaultCommand(swerve.driveCommand(xboxController::getLeftX, xboxController::getLeftY, xboxController::getRightX));
+        swerve.setDefaultCommand(
+                swerve.driveCommand(
+                    () -> -xboxController.getLeftX(),
+                    () -> -xboxController.getLeftY(),
+                    () -> -xboxController.getRightX()
+                )
+        );
 
         xboxController.povUp().whileTrue(climber.climberUp());
         xboxController.povDown().whileTrue(climber.climberDown());
@@ -37,7 +50,7 @@ public class RobotContainer {
     
     public Command getAutonomousCommand()
     {
-        return Commands.print("No autonomous command configured");
+        return new InstantCommand();
     }
 }
 

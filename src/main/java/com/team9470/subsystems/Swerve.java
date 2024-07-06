@@ -1,13 +1,15 @@
 package com.team9470.subsystems;
 
-import com.team9470.Constants;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
+import static com.team9470.Constants.AutonConstants;
 import static com.team9470.Constants.SwerveConstants;
 
 public class Swerve extends SubsystemBase {
@@ -39,18 +42,60 @@ public class Swerve extends SubsystemBase {
     }
 
     private void configPathPlanner() {
-
+        AutoBuilder.configureHolonomic(
+                this::getPose,
+                this::resetOdometry,
+                this::getRobotVelocity,
+                this::setChassisSpeeds,
+                new HolonomicPathFollowerConfig(
+                        AutonConstants.TRANSLATION_PID,
+                        AutonConstants.ROTATION_PID,
+                        SwerveConstants.MAX_SPEED,
+                        swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
+                        new ReplanningConfig()
+                ),
+                this::isRedAlliance,
+                this
+        );
     }
 
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularSpeedX){
         return this.run(() ->
                 swerveDrive.drive(
-                        new Translation2d(translationX.getAsDouble(), translationY.getAsDouble()),
+                        new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(), translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
                         angularSpeedX.getAsDouble(),
                         true,
                         false
                 )
         );
+    }
+
+    public Command aimAtSpeaker(){
+        // TODO: MIHIR
+        return new Command() {
+            @Override
+            public void initialize() {
+                super.initialize();
+            }
+
+            @Override
+            public void execute() {
+                super.execute();
+            }
+
+            @Override
+            public void end(boolean interrupted) {
+                super.end(interrupted);
+            }
+
+            @Override
+            public boolean isFinished() {
+                return super.isFinished();
+            }
+        };
+//         return this.run(() -> {
+//              //code here
+//         });
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative)
@@ -59,6 +104,11 @@ public class Swerve extends SubsystemBase {
                 rotation,
                 fieldRelative,
                 false); // Open loop is disabled since it shouldn't be used most of the time.
+
+    }
+
+    public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+        swerveDrive.drive(chassisSpeeds);
     }
 
     @Override
@@ -68,7 +118,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        super.simulationPeriodic();
+        SmartDashboard.putNumber("Y", getPose().getY());
     }
 
     /**
