@@ -15,12 +15,14 @@ public class IntakeRollers extends SubsystemBase {
         intakeRollerMotor.restoreFactoryDefaults();
         intakeRollerMotor.setIdleMode(CANSparkBase.IdleMode.kBrake);
     }
-    public void setVoltage (Float voltage){
+    public void setVoltage (double voltage){
         intakeRollerMotor.setVoltage(voltage);
     }
+
     public Command intakeIn(){
         return this.runEnd(() -> setVoltage(INTAKE_TAKE_IN_VOLTAGE), () -> setVoltage(0f));
     }
+
     public Command intakeStop (){
         return new InstantCommand(() -> setVoltage(0f));
     }

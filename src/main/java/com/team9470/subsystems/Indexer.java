@@ -23,21 +23,21 @@ public class Indexer extends SubsystemBase {
     }
 
     //functions and commands
-    public void setVoltage (Float voltage){
+    public void setVoltage (double voltage){
         index1.setVoltage(voltage);
         index2.setVoltage(voltage);
     }
 
     public Command beltForward (){
-        return this.runEnd(() -> setVoltage(BELT_FORWARD_VOLTAGE), () -> setVoltage(0f));
+        return this.runEnd(() -> setVoltage(BELT_FORWARD_VOLTAGE), () -> setVoltage(0.0));
     }
 
     public Command beltBackward (){
-        return this.runEnd(() -> setVoltage(BELT_BACKWARD_VOLTAGE), () -> setVoltage(0f));
+        return this.runEnd(() -> setVoltage(BELT_BACKWARD_VOLTAGE), () -> setVoltage(0.0));
     }
 
     public Command beltStop (){
-        return new InstantCommand(() -> setVoltage(0f));
+        return new InstantCommand(() -> setVoltage(0.0));
     }
 
     public boolean hasNote(){
