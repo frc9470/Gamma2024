@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,34 +71,6 @@ public class Swerve extends SubsystemBase {
         );
     }
 
-    public Command aimAtSpeaker(){
-        // TODO: MIHIR
-        return new Command() {
-            @Override
-            public void initialize() {
-                super.initialize();
-            }
-
-            @Override
-            public void execute() {
-                super.execute();
-            }
-
-            @Override
-            public void end(boolean interrupted) {
-                super.end(interrupted);
-            }
-
-            @Override
-            public boolean isFinished() {
-                return super.isFinished();
-            }
-        };
-//         return this.run(() -> {
-//              //code here
-//         });
-    }
-
     public void drive(Translation2d translation, double rotation, boolean fieldRelative)
     {
         swerveDrive.drive(translation,
@@ -118,7 +91,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        SmartDashboard.putNumber("Y", getPose().getY());
+        super.simulationPeriodic();
     }
 
     /**
