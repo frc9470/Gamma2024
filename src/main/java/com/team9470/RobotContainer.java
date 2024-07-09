@@ -6,7 +6,6 @@
 package com.team9470;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.team9470.commands.IntakeNote;
 import com.team9470.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,10 +18,12 @@ public class RobotContainer {
     private final CommandXboxController xboxController = new CommandXboxController(0);
 
     private final Swerve swerve = new Swerve();
-    private final Climber climber = new Climber();
-    private final Hood intakeDeploy = new Hood();
+    private final Hood hood = new Hood();
+    private final IntakeArm intakeArm = new IntakeArm();
     private final IntakeRollers intakeRollers = new IntakeRollers();
     private final Indexer indexer = new Indexer();
+
+    private final Superstructure superstructure = new Superstructure(swerve, hood, intakeRollers, intakeArm, indexer);
 
     private final SendableChooser<Command> autoChooser;
     public RobotContainer()
@@ -32,19 +33,18 @@ public class RobotContainer {
         SmartDashboard.putData(autoChooser);
     }
     
-    
     private void configureBindings() {
         swerve.setDefaultCommand(
                 swerve.driveCommand(
-                    () -> -xboxController.getLeftX(),
+                        xboxController::getLeftX,
                     () -> -xboxController.getLeftY(),
                     () -> -xboxController.getRightX()
                 )
         );
 
-        xboxController.povUp().whileTrue(climber.climberUp());
-        xboxController.povDown().whileTrue(climber.climberDown());
-        xboxController.leftBumper().whileTrue(new IntakeNote(intakeRollers, intakeDeploy, indexer));
+        xboxController.a().onTrue(new InstantCommand(swerve::zeroGyro));
+
+        xboxController.leftBumper().whileTrue(superstructure.intakeNote());
     }
     
     

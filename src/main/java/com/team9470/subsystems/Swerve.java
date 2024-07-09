@@ -63,7 +63,7 @@ public class Swerve extends SubsystemBase {
         return this.run(() ->
                 swerveDrive.drive(
                         new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(), translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
-                        angularSpeedX.getAsDouble(),
+                        angularSpeedX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
                         true,
                         false
                 )
