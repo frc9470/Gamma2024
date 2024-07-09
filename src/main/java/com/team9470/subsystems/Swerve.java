@@ -22,35 +22,8 @@ import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
 import static com.team9470.Constants.SwerveConstants;
-import static com.team9470.Constants.SwerveConstants.TOLERANCE;
-import static com.team9470.Constants.VisionConstants.*;
-import static edu.wpi.first.math.kinematics.ChassisSpeeds.fromFieldRelativeSpeeds;
-import static org.photonvision.PhotonUtils.getYawToPose;
-
 
 public class Swerve extends SubsystemBase {
-
-    private Vision frontL = new Vision("frontL", FRONT_LEFT_CAMERA_OFFSET);
-    private Vision frontR = new Vision("frontR", FRONT_RIGHT_CAMERA_OFFSET);
-    private Vision back = new Vision("back", BACK_CAMERA_OFFSET);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private final SwerveDrive swerveDrive;
 
     public Swerve() { // 80% of free speed // TODO: this doesn't really look right tbh
@@ -80,26 +53,6 @@ public class Swerve extends SubsystemBase {
         );
     }
 
-    public Command aimAtSpeaker(){
-        SwerveController controller = swerveDrive.getSwerveController();
-        return run(
-                () -> {
-                    drive(ChassisSpeeds.fromFieldRelativeSpeeds(0,
-                            0,
-                            controller.headingCalculate(getHeading().getRadians(),
-                                    yawToTarget().getRadians()),
-                            getHeading())
-                    );
-                }).until(() -> yawToTarget().minus(getHeading()).getDegrees() < TOLERANCE);
-    }
-
-
-    public  Rotation2d yawToTarget() {
-        Pose2d targetPos = isRedAlliance() ? new Pose2d(14.73, 7.65, new Rotation2d(Math.PI)) :  new Pose2d(1.82, 7.65, new Rotation2d());
-        Pose2d robotPos = getPose();
-        return getYawToPose(robotPos, targetPos);
-    }
-
     public void drive(Translation2d translation, double rotation, boolean fieldRelative)
     {
         swerveDrive.drive(translation,
@@ -108,29 +61,16 @@ public class Swerve extends SubsystemBase {
                 false); // Open loop is disabled since it shouldn't be used most of the time.
     }
 
-    public void drive(ChassisSpeeds chassisSpeeds) {
-        swerveDrive.drive(chassisSpeeds);
-    }
-
     @Override
     public void periodic() {
-
         super.periodic();
-        if (frontL.getPosEstimate().isPresent()) {
-            swerveDrive.addVisionMeasurement(frontL.getPosEstimate().get().estimatedPose.toPose2d(), frontL.getPosEstimate().get().timestampSeconds);
-        }
-        if (frontR.getPosEstimate().isPresent()) {
-            swerveDrive.addVisionMeasurement(frontR.getPosEstimate().get().estimatedPose.toPose2d(), frontR.getPosEstimate().get().timestampSeconds);
-        }
-        if (back.getPosEstimate().isPresent()) {
-            swerveDrive.addVisionMeasurement(back.getPosEstimate().get().estimatedPose.toPose2d(), back.getPosEstimate().get().timestampSeconds);
-        }
     }
 
     @Override
     public void simulationPeriodic() {
         super.simulationPeriodic();
     }
+
     /**
      * Command to characterize the robot drive motors using SysId
      *
