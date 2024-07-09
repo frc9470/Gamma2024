@@ -21,7 +21,7 @@ public class Superstructure extends SubsystemBase {
     }
 
     private void updateShooter(){
-        Pose
+
     }
 
 

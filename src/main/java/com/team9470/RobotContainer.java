@@ -19,11 +19,12 @@ public class RobotContainer {
 
     private final Swerve swerve = new Swerve();
     private final Hood hood = new Hood();
+    private final Shooter shooter = new Shooter();
     private final IntakeArm intakeArm = new IntakeArm();
     private final IntakeRollers intakeRollers = new IntakeRollers();
     private final Indexer indexer = new Indexer();
 
-    private final Superstructure superstructure = new Superstructure(swerve, hood, intakeRollers, intakeArm, indexer);
+    private final Superstructure superstructure = new Superstructure(swerve, hood, shooter, intakeRollers, intakeArm, indexer);
 
     private final SendableChooser<Command> autoChooser;
     public RobotContainer()
