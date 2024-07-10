@@ -1,4 +1,9 @@
 {
+  "Keyboard 0 Settings": {
+    "window": {
+      "visible": true
+    }
+  },
   "keyboardJoysticks": [
     {
       "axisConfig": [
@@ -9,9 +14,15 @@
         {
           "decKey": 83,
           "incKey": 65
+        },
+        {},
+        {},
+        {
+          "decKey": 262,
+          "incKey": 263
         }
       ],
-      "axisCount": 4,
+      "axisCount": 5,
       "buttonCount": 4,
       "buttonKeys": [
         90,
@@ -84,6 +95,5 @@
     {
       "guid": "Keyboard0"
     }
-  ],
-  "useEnableDisableHotkeys": true
+  ]
 }
