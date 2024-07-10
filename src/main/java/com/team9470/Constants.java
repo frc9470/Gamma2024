@@ -1,6 +1,8 @@
 package com.team9470;
 
 import com.pathplanner.lib.util.PIDConstants;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -56,11 +58,20 @@ public class Constants {
 
     public static class SwerveConstants {
         public static final double MAX_SPEED = Units.feetToMeters(16.6); // TODO: is 80% of free speed correct?
+        public static final double TOLERANCE = 2.5;
     }
 
     public static class AutonConstants {
         public static final PIDConstants TRANSLATION_PID = new PIDConstants(1.2, 0, 0);
         public static final PIDConstants ROTATION_PID = new PIDConstants(1.2, 0, 0);
+    }
+
+    public static class VisionConstants {
+        public static final Transform3d FRONT_LEFT_CAMERA_OFFSET = new Transform3d(9.611, 9.481,7.495, new Rotation3d(0, 0, 0));
+        public static final Transform3d FRONT_RIGHT_CAMERA_OFFSET = new Transform3d(9.611, 0,0, new Rotation3d(0, 0, 0));
+        public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(9.611, 0,0, new Rotation3d(0, 0, 0));
+
+
     }
 
 }

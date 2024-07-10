@@ -9,12 +9,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static com.team9470.Constants.IntakeConstants.*;
 
 public class IntakeRollers extends SubsystemBase {
+    private static IntakeRollers instance;
     public final CANSparkMax intakeRollerMotor = new CANSparkMax(INTAKE_ROLLER_ID, CANSparkMax.MotorType.kBrushless);
-    public IntakeRollers(){
+    private IntakeRollers(){
         //settings
         intakeRollerMotor.restoreFactoryDefaults();
         intakeRollerMotor.setIdleMode(CANSparkBase.IdleMode.kBrake);
     }
+
+    public static IntakeRollers getInstance(){
+        if(instance == null){
+            instance = new IntakeRollers();
+        }
+        return instance;
+    }
+
     public void setVoltage (double voltage){
         intakeRollerMotor.setVoltage(voltage);
     }

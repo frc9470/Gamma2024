@@ -1,4 +1,4 @@
-package com.team254.lib.geometry;
+package edu.wpi.first.math.geometry;
 
 import com.team254.lib.util.CSVWritable;
 import com.team254.lib.util.Interpolable;

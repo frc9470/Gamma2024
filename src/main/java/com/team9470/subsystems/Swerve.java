@@ -7,10 +7,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -24,11 +22,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
-import static com.team9470.Constants.AutonConstants;
-import static com.team9470.Constants.SwerveConstants;
+import static com.team9470.Constants.*;
 
 public class Swerve extends SubsystemBase {
+    private static Swerve instance;
     private final SwerveDrive swerveDrive;
+
+    private Vision frontL = new Vision("frontL", VisionConstants.FRONT_LEFT_CAMERA_OFFSET);
+    private Vision frontR = new Vision("frontR", VisionConstants.FRONT_RIGHT_CAMERA_OFFSET);
+    private Vision back = new Vision("back", VisionConstants.BACK_CAMERA_OFFSET);
 
     public Swerve() { // 80% of free speed // TODO: this doesn't really look right tbh
         File f = new File(Filesystem.getDeployDirectory(), "swerve");
@@ -40,6 +42,13 @@ public class Swerve extends SubsystemBase {
         }
         swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation);
         configPathPlanner();
+    }
+
+    public static Swerve getInstance(){
+        if(instance == null){
+            instance = new Swerve();
+        }
+        return instance;
     }
 
     private void configPathPlanner() {
@@ -55,7 +64,7 @@ public class Swerve extends SubsystemBase {
                         swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
                         new ReplanningConfig()
                 ),
-                this::isRedAlliance,
+                Swerve::isRedAlliance,
                 this
         );
     }
@@ -87,6 +96,15 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
+        if (frontL.getPosEstimate().isPresent()) {
+            swerveDrive.addVisionMeasurement(frontL.getPosEstimate().get().estimatedPose.toPose2d(), frontL.getPosEstimate().get().timestampSeconds);
+        }
+        if (frontR.getPosEstimate().isPresent()) {
+            swerveDrive.addVisionMeasurement(frontR.getPosEstimate().get().estimatedPose.toPose2d(), frontR.getPosEstimate().get().timestampSeconds);
+        }
+        if (back.getPosEstimate().isPresent()) {
+            swerveDrive.addVisionMeasurement(back.getPosEstimate().get().estimatedPose.toPose2d(), back.getPosEstimate().get().timestampSeconds);
+        }
     }
 
     @Override
@@ -159,7 +177,7 @@ public class Swerve extends SubsystemBase {
      *
      * @return true if the red alliance, false if blue. Defaults to false if none is available.
      */
-    private boolean isRedAlliance()
+    public static boolean isRedAlliance()
     {
         var alliance = DriverStation.getAlliance();
         return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;

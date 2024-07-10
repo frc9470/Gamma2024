@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static com.team9470.Constants.IntakeConstants.*;
 
 public class IntakeArm extends SubsystemBase { // MAKE SURE ABSOLUTE ENCODER DOES NOT WRAP
+    private static IntakeArm instance;
     private final CANSparkMax intakeArmMotor = new CANSparkMax(INTAKE_ARM_ID, CANSparkMax.MotorType.kBrushless);
     private final DutyCycleEncoder intakeArmEncoder = new DutyCycleEncoder(THROUGH_BORE);
     private final ArmFeedforward ff = new ArmFeedforward(FF_S, FF_G, FF_V);
@@ -32,10 +33,17 @@ public class IntakeArm extends SubsystemBase { // MAKE SURE ABSOLUTE ENCODER DOE
     private boolean init = true;
 
 
-    public IntakeArm(){
+    private IntakeArm(){
         //settings
         intakeArmMotor.restoreFactoryDefaults();
         intakeArmMotor.setIdleMode(CANSparkBase.IdleMode.kBrake);
+    }
+
+    public static IntakeArm getInstance(){
+        if(instance == null){
+            instance = new IntakeArm();
+        }
+        return instance;
     }
 
     private double lastSpeed = 0;
