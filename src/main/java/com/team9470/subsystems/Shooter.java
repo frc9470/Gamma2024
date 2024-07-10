@@ -18,6 +18,7 @@ import static com.team9470.Constants.ShooterConstants.*;
  * </ul>
  */
 public class Shooter extends SubsystemBase {
+    private static Shooter instance;
     public final CANSparkMax top = new CANSparkMax(ID_TOP, CANSparkMax.MotorType.kBrushless);
     public final CANSparkMax bottom = new CANSparkMax(ID_BOTTOM, CANSparkMax.MotorType.kBrushless);
     public final RelativeEncoder topEncoder = top.getEncoder();
@@ -28,7 +29,7 @@ public class Shooter extends SubsystemBase {
     private double topSetpoint = 0;
     private double bottomSetpoint = 0;
 
-    public Shooter(){
+    private Shooter(){
         top.restoreFactoryDefaults();
         top.setIdleMode(CANSparkBase.IdleMode.kBrake);
         topEncoder.setVelocityConversionFactor(SHOOTER_RATIO);
@@ -37,6 +38,13 @@ public class Shooter extends SubsystemBase {
         bottom.setIdleMode(CANSparkBase.IdleMode.kBrake);
         bottomEncoder.setVelocityConversionFactor(SHOOTER_RATIO);
         bottom.setInverted(true);
+    }
+
+    public static Shooter getInstance(){
+        if(instance == null){
+            instance = new Shooter();
+        }
+        return instance;
     }
 
     @Override
@@ -48,6 +56,10 @@ public class Shooter extends SubsystemBase {
     public void setVelocity(double top, double bottom){
         topSetpoint = top;
         bottomSetpoint = bottom;
+    }
+
+    public void setVelocity(double rpm){
+        setVelocity(rpm, rpm);
     }
 
 }

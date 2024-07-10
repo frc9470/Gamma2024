@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static com.team9470.Constants.HoodConstants.*;
 
 public class Hood extends SubsystemBase { // MAKE SURE ABSOLUTE ENCODER DOES NOT WRAP
+    private static Hood instance;
+
     private final CANSparkMax hoodMotor = new CANSparkMax(HOOD_ID, CANSparkMax.MotorType.kBrushless);
     private final DutyCycleEncoder hoodEncoder = new DutyCycleEncoder(THROUGH_BORE);
     private final ArmFeedforward ff = new ArmFeedforward(FF_S, FF_G, FF_V);
@@ -29,10 +31,17 @@ public class Hood extends SubsystemBase { // MAKE SURE ABSOLUTE ENCODER DOES NOT
     private double goal = 0;
 
 
-    public Hood(){
+    private Hood(){
         //settings
         hoodMotor.restoreFactoryDefaults();
         hoodMotor.setIdleMode(CANSparkBase.IdleMode.kBrake);
+    }
+
+    public static Hood getInstance(){
+        if(instance == null){
+            instance = new Hood();
+        }
+        return instance;
     }
 
     private double lastSpeed = 0;

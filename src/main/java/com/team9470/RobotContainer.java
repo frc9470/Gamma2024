@@ -17,14 +17,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
     private final CommandXboxController xboxController = new CommandXboxController(0);
 
-    private final Swerve swerve = new Swerve();
-    private final Hood hood = new Hood();
-    private final Shooter shooter = new Shooter();
-    private final IntakeArm intakeArm = new IntakeArm();
-    private final IntakeRollers intakeRollers = new IntakeRollers();
-    private final Indexer indexer = new Indexer();
+    private final Swerve swerve = Swerve.getInstance();
+    private final Hood hood = Hood.getInstance();
+    private final Shooter shooter = Shooter.getInstance();
+    private final IntakeArm intakeArm = IntakeArm.getInstance();
+    private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
+    private final Indexer indexer = Indexer.getInstance();
 
-    private final Superstructure superstructure = new Superstructure(swerve, hood, shooter, intakeRollers, intakeArm, indexer);
+    private final Superstructure superstructure = new Superstructure();
 
     private final SendableChooser<Command> autoChooser;
     public RobotContainer()

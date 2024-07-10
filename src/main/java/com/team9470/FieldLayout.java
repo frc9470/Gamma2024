@@ -1,10 +1,10 @@
 package com.team9470;
 
-import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Rotation2d;
-import com.team254.lib.geometry.Translation2d;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import java.io.IOException;
 
@@ -59,21 +59,21 @@ public class FieldLayout {
 
 	public static Pose2d handleAllianceFlip(Pose2d blue_pose, boolean is_red_alliance) {
 		if (is_red_alliance) {
-			blue_pose = blue_pose.mirrorAboutX(kFieldLength / 2.0);
+			blue_pose = mirrorAboutX(blue_pose, kFieldLength / 2.0);
 		}
 		return blue_pose;
 	}
 
 	public static Translation2d handleAllianceFlip(Translation2d blue_translation, boolean is_red_alliance) {
 		if (is_red_alliance) {
-			blue_translation = blue_translation.mirrorAboutX(kFieldLength / 2.0);
+			blue_translation = mirrorAboutX(blue_translation,kFieldLength / 2.0);
 		}
 		return blue_translation;
 	}
 
 	public static Rotation2d handleAllianceFlip(Rotation2d blue_rotation, boolean is_red_alliance) {
 		if (is_red_alliance) {
-			blue_rotation = blue_rotation.mirrorAboutX();
+			blue_rotation = mirrorAboutX(blue_rotation);
 		}
 		return blue_rotation;
 	}
@@ -83,5 +83,17 @@ public class FieldLayout {
 			return kFieldLength - x_coordinate;
 		}
 		return x_coordinate;
+	}
+
+	public static Pose2d mirrorAboutX(Pose2d pose, double xValue) {
+		return new Pose2d(mirrorAboutX(pose.getTranslation(), xValue), mirrorAboutX(pose.getRotation()));
+	}
+
+	public static Translation2d mirrorAboutX(Translation2d translation, double xValue) {
+		return new Translation2d(xValue + (xValue - translation.getX()), translation.getY());
+	}
+
+	public static Rotation2d mirrorAboutX(Rotation2d rotation) {
+		return new Rotation2d(-rotation.getCos(), -rotation.getSin());
 	}
 }

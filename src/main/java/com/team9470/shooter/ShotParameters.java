@@ -1,11 +1,12 @@
 package com.team9470.shooter;
 
-import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Rotation2d;
-import com.team254.lib.geometry.Translation2d;
-import com.team254.lib.geometry.Twist2d;
+
 import com.team254.lib.util.InterpolatingDouble;
 import com.team9470.FieldLayout;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,10 +29,10 @@ public record ShotParameters(double distance, double rpm, double angle, double h
      */
     public static ShotParameters calculate(Pose2d pose, Twist2d velocity, boolean isRedAlliance, boolean shootOnMove) {
         Translation2d target = FieldLayout.handleAllianceFlip(SPEAKER_CENTER.getTranslation(), isRedAlliance);
-        Translation2d targetRelative = target.translateBy(target.inverse());
+        Translation2d targetRelative = pose.getTranslation().minus(target);
 
-        double yaw = targetRelative.direction().getDegrees();
-        double distance = targetRelative.norm();
+        double yaw = targetRelative.getAngle().getDegrees();
+        double distance = targetRelative.getNorm();
         double range;
 
         if (shootOnMove) {
@@ -59,8 +60,8 @@ public record ShotParameters(double distance, double rpm, double angle, double h
      */
     private static double[] adjustForMovement(double yaw, double distance, Twist2d velocity) {
         Translation2d polarVelocity = new Translation2d(velocity.dx, velocity.dy).rotateBy(Rotation2d.fromDegrees(yaw));
-        double radial = polarVelocity.x();
-        double tangential = polarVelocity.y();
+        double radial = polarVelocity.getX();
+        double tangential = polarVelocity.getY();
 
         SmartDashboard.putNumber("FiringParams/Tangential", tangential);
         SmartDashboard.putNumber("FiringParams/Radial", radial);

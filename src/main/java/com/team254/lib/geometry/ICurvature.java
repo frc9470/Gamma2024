@@ -1,4 +1,4 @@
-package com.team254.lib.geometry;
+package edu.wpi.first.math.geometry;
 
 public interface ICurvature<S> extends State<S> {
     double getCurvature();
