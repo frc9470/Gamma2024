@@ -7,6 +7,7 @@ package com.team9470;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.team9470.subsystems.*;
+import com.team9470.subsystems.vision.Vision;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +26,7 @@ public class RobotContainer {
     private final IntakeArm intakeArm = IntakeArm.getInstance();
     private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
     private final Indexer indexer = Indexer.getInstance();
+    private final Vision vision = Vision.getInstance();
 
     private final Superstructure superstructure = new Superstructure();
 

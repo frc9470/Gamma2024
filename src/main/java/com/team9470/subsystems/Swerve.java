@@ -3,15 +3,22 @@ package com.team9470.subsystems;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.team9470.subsystems.vision.VisionDevice;
+import com.team9470.subsystems.vision.VisionPoseAcceptor;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.photonvision.EstimatedRobotPose;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -20,6 +27,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
 import static com.team9470.Constants.*;
@@ -28,9 +36,7 @@ public class Swerve extends SubsystemBase {
     private static Swerve instance;
     private final SwerveDrive swerveDrive;
 
-    private final Vision frontL = new Vision("frontL", VisionConstants.FRONT_LEFT_CAMERA_OFFSET);
-    private final Vision frontR = new Vision("frontR", VisionConstants.FRONT_RIGHT_CAMERA_OFFSET);
-    private final Vision back = new Vision("back", VisionConstants.BACK_CAMERA_OFFSET);
+    private final VisionPoseAcceptor visionPoseAcceptor = new VisionPoseAcceptor();
 
     public Swerve() { // 80% of free speed // TODO: this doesn't really look right tbh
         File f = new File(Filesystem.getDeployDirectory(), "swerve");
@@ -106,8 +112,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        super.periodic();
-        Vision.getPoses();
+
     }
 
     @Override
@@ -231,6 +236,13 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
+     * Get Twist2d of robot velocity
+     */
+    public Twist2d getRobotTwist(){
+        return new Twist2d(getRobotVelocity().vxMetersPerSecond, getRobotVelocity().vyMetersPerSecond, getRobotVelocity().omegaRadiansPerSecond);
+    }
+
+    /**
      * Get the {@link SwerveController} in the swerve drive.
      *
      * @return {@link SwerveController} from the {@link SwerveDrive}.
@@ -240,4 +252,10 @@ public class Swerve extends SubsystemBase {
         return swerveDrive.swerveController;
     }
 
+
+    public void addVisionMeasurement(Pose2d cameraPose, double timestamp, Matrix<N3, N1> stddevs) {
+        if(visionPoseAcceptor.shouldAcceptVision(timestamp, cameraPose, getPose(), getRobotTwist(), DriverStation.isAutonomous()))
+            swerveDrive.addVisionMeasurement(cameraPose, timestamp, stddevs);
+
+    }
 }
