@@ -20,13 +20,13 @@ public class Vision {
     private static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
 
-    public Vision(String name, Transform3d amongus) {
+    public Vision(String name, Transform3d transform) {
         this.photonCamera = new PhotonCamera(name);
         photonPoseEstimator = new PhotonPoseEstimator(
                 aprilTagFieldLayout,
                 PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                 photonCamera,
-                amongus// Robot to camera transform (adjust as needed)
+                transform// Robot to camera transform (adjust as needed)
 
         );
         cameras.add(this);

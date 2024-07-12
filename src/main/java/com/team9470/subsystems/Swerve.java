@@ -28,9 +28,9 @@ public class Swerve extends SubsystemBase {
     private static Swerve instance;
     private final SwerveDrive swerveDrive;
 
-    private Vision frontL = new Vision("frontL", VisionConstants.FRONT_LEFT_CAMERA_OFFSET);
-    private Vision frontR = new Vision("frontR", VisionConstants.FRONT_RIGHT_CAMERA_OFFSET);
-    private Vision back = new Vision("back", VisionConstants.BACK_CAMERA_OFFSET);
+    private final Vision frontL = new Vision("frontL", VisionConstants.FRONT_LEFT_CAMERA_OFFSET);
+    private final Vision frontR = new Vision("frontR", VisionConstants.FRONT_RIGHT_CAMERA_OFFSET);
+    private final Vision back = new Vision("back", VisionConstants.BACK_CAMERA_OFFSET);
 
     public Swerve() { // 80% of free speed // TODO: this doesn't really look right tbh
         File f = new File(Filesystem.getDeployDirectory(), "swerve");
@@ -69,11 +69,22 @@ public class Swerve extends SubsystemBase {
         );
     }
 
+//    public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularSpeedX){
+//        return this.run(() ->
+//                swerveDrive.drive(
+//                        new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(), translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
+//                        angularSpeedX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
+//                        true,
+//                        false
+//                )
+//        );
+//    }
+
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularSpeedX){
         return this.run(() ->
                 swerveDrive.drive(
-                        new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumVelocity(), translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
-                        angularSpeedX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
+                        new Translation2d(translationX.getAsDouble() * 0.1, translationY.getAsDouble() * 0.1),
+                        angularSpeedX.getAsDouble() * 0.1,
                         true,
                         false
                 )
@@ -96,15 +107,7 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
-        if (frontL.getPosEstimate().isPresent()) {
-            swerveDrive.addVisionMeasurement(frontL.getPosEstimate().get().estimatedPose.toPose2d(), frontL.getPosEstimate().get().timestampSeconds);
-        }
-        if (frontR.getPosEstimate().isPresent()) {
-            swerveDrive.addVisionMeasurement(frontR.getPosEstimate().get().estimatedPose.toPose2d(), frontR.getPosEstimate().get().timestampSeconds);
-        }
-        if (back.getPosEstimate().isPresent()) {
-            swerveDrive.addVisionMeasurement(back.getPosEstimate().get().estimatedPose.toPose2d(), back.getPosEstimate().get().timestampSeconds);
-        }
+        Vision.getPoses();
     }
 
     @Override

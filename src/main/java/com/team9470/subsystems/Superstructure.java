@@ -1,5 +1,6 @@
 package com.team9470.subsystems;
 
+import com.team9470.Constants;
 import com.team9470.shooter.ShotParameters;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -27,7 +28,7 @@ public class Superstructure extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateShooter();
+//        updateShooter();
     }
 
     private void updateShooter(){
@@ -53,6 +54,10 @@ public class Superstructure extends SubsystemBase {
                 .alongWith(indexer.beltForward()).until(indexer::hasNote)
                 .andThen(
                         indexer.beltStop().alongWith(intakeArm.intakeUp()).alongWith(intakeRollers.intakeStop())
-                );
+                ).handleInterrupt(() -> {
+                    indexer.setVoltage(0);
+                    intakeRollers.setVoltage(0);
+                    intakeArm.setGoal(Constants.IntakeConstants.UP_GOAL);
+                });
     }
 }
