@@ -7,29 +7,8 @@ public class RegressionMaps {
     public static final InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> ANGLE_MAP, SPEED_MAP, YAW_MAP;
 
     static {
-        ANGLE_MAP = new InterpolatingTreeMap<>();
-
-        for(int i = 0; i < SpeakerRegression.DIST_TO_ANGLE.length; i++) {
-            ANGLE_MAP.put(
-                    new InterpolatingDouble(SpeakerRegression.DIST_TO_ANGLE[i][0]),
-                    new InterpolatingDouble(SpeakerRegression.DIST_TO_ANGLE[i][1])
-            );
-        }
-
-        SPEED_MAP = new InterpolatingTreeMap<>();
-        for(int i = 0; i < SpeakerRegression.DIST_TO_SPEED.length; i++) {
-            SPEED_MAP.put(
-                    new InterpolatingDouble(SpeakerRegression.DIST_TO_SPEED[i][0]),
-                    new InterpolatingDouble(SpeakerRegression.DIST_TO_SPEED[i][1])
-            );
-        }
-
-        YAW_MAP = new InterpolatingTreeMap<>();
-        for(int i = 0; i < SpeakerRegression.DIST_TO_YAW.length; i++) {
-            YAW_MAP.put(
-                    new InterpolatingDouble(SpeakerRegression.DIST_TO_YAW[i][0]),
-                    new InterpolatingDouble(SpeakerRegression.DIST_TO_YAW[i][1])
-            );
-        }
+        ANGLE_MAP = InterpolatingTreeMap.ofDouble(SpeakerRegression.DIST_TO_ANGLE);
+        SPEED_MAP = InterpolatingTreeMap.ofDouble(SpeakerRegression.DIST_TO_SPEED);
+        YAW_MAP = InterpolatingTreeMap.ofDouble(SpeakerRegression.DIST_TO_YAW);
     }
 }

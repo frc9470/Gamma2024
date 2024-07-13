@@ -34,7 +34,7 @@ public class Indexer extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Indexer/Beam Break", beamBreak.get());
+        SmartDashboard.putBoolean("Indexer/Beam Break", hasNote());
     }
 
     //functions and commands

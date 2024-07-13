@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.team9470.Constants.ShooterConstants.*;
@@ -62,4 +63,13 @@ public class Shooter extends SubsystemBase {
         setVelocity(rpm, rpm);
     }
 
+    public Command waitReady() {
+        return new Command() {
+            @Override
+            public boolean isFinished() {
+                return Math.abs(topEncoder.getVelocity() - topSetpoint) < TOLERANCE
+                        && Math.abs(bottomEncoder.getVelocity() - bottomSetpoint) < TOLERANCE;
+            }
+        };
+    }
 }

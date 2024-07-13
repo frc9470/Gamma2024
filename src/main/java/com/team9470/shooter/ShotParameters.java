@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * A data class to represent shot parameters for a certain shot.
  */
-public record ShotParameters(double distance, double rpm, double angle, double heading) {
+public record ShotParameters(double distance, double rpm, double angle, Rotation2d heading) {
 
     private static final Pose2d SPEAKER_CENTER = FieldLayout.kSpeakerCenter;
     private static final double TO_F_FACTOR = 0.2;
@@ -47,7 +47,7 @@ public record ShotParameters(double distance, double rpm, double angle, double h
         double angle = getShooterAngle(range);
         double heading = yaw + getShooterYaw(range);
 
-        return new ShotParameters(distance, rpm, angle, heading);
+        return new ShotParameters(distance, rpm, angle, new Rotation2d(heading));
     }
 
     /**

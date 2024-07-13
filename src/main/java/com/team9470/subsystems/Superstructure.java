@@ -5,8 +5,8 @@ import com.team9470.shooter.ShotParameters;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.*;
 
 public class Superstructure extends SubsystemBase {
     private static Superstructure instance;
@@ -18,6 +18,7 @@ public class Superstructure extends SubsystemBase {
     private final Shooter shooter = Shooter.getInstance();
 
     public static final boolean SHOOT_ON_MOVE = false;
+    public static final double STEADY_RPM = 120.0;
 
     public static Superstructure getInstance(){
         if(instance == null){
@@ -41,11 +42,19 @@ public class Superstructure extends SubsystemBase {
                 SHOOT_ON_MOVE
         );
 
+        if (parameters.distance() > 10.4){
+            hood.setGoal(50.0);
+            shooter.setVelocity(STEADY_RPM);
+            return;
+        }
+
         hood.setGoal(parameters.angle());
         shooter.setVelocity(parameters.rpm());
 
-
-
+        SmartDashboard.putNumber("FiringParams/Distance to target", parameters.distance());
+        SmartDashboard.putNumber("FiringParams/HoodError", parameters.angle() - hood.getPosition());
+        SmartDashboard.putNumber("FiringParams/TargetHeading", parameters.heading().getDegrees());
+        SmartDashboard.putNumber("FiringParams/CurrentHeading", swerve.getHeading().getDegrees());
     }
 
     public Command intakeNote(){
@@ -59,5 +68,21 @@ public class Superstructure extends SubsystemBase {
                     intakeRollers.setVoltage(0);
                     intakeArm.setGoal(Constants.IntakeConstants.UP_GOAL);
                 });
+    }
+
+    public Command shootNote(){
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                    // wait for shooter to spin up
+                    shooter.waitReady(),
+                    // wait for hood to get to correct angle
+                    hood.waitReady(),
+                    // wait for heading to update
+                    swerve.aimAtSpeaker()
+                ),
+                indexer.beltForward().until(() -> !indexer.hasNote()),
+                new WaitCommand(0.2),
+                indexer.beltStop()
+        );
     }
 }

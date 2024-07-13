@@ -24,6 +24,38 @@ public class InterpolatingTreeMap<K extends InverseInterpolable<K> & Comparable<
         this(0);
     }
 
+    public InterpolatingTreeMap(K[] keys, V[] values) {
+        this(0);
+        for (int i = 0; i < keys.length; i++) {
+            put(keys[i], values[i]);
+        }
+    }
+
+    public InterpolatingTreeMap(K[][] values) {
+        this(0);
+        // if the types KV dont match, throw an error
+
+        if (values[0].length != 2) {
+            throw new IllegalArgumentException("Input array does not have 2 columns");
+        }
+        for (K[] value : values) {
+            put(value[0], (V) value[1]);
+        }
+    }
+
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> ofDouble(double[][] values) {
+        if (values[0].length != 2) {
+            throw new IllegalArgumentException("Input array does not have 2 columns");
+        }
+        InterpolatingDouble[] keys = new InterpolatingDouble[values.length];
+        InterpolatingDouble[] vals = new InterpolatingDouble[values.length];
+        for (int i = 0; i < values.length; i++) {
+            keys[i] = new InterpolatingDouble(values[i][0]);
+            vals[i] = new InterpolatingDouble(values[i][1]);
+        }
+        return new InterpolatingTreeMap<>(keys, vals);
+    }
+
     /**
      * Inserts a key value pair, and trims the tree if a max size is specified
      *

@@ -1,6 +1,7 @@
 package com.team9470;
 
 import com.pathplanner.lib.util.PIDConstants;
+import com.team9470.subsystems.arm.ArmConfiguration;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -29,42 +30,39 @@ public class Constants {
 
     public static class IntakeConstants{
         public static final int INTAKE_ROLLER_ID = 15;
-        public static final int INTAKE_ARM_ID = 14;
-        public static final int THROUGH_BORE = 0;
         public static final boolean IS_TUNING = false;
         public static final TunableNumber INTAKE_TAKE_IN_VOLTAGE = new TunableNumber("Intake/Roller_Voltage", 6.0, IS_TUNING);
-        public static final double INTAKE_ENCODER_RATIO = 18.0/30; // driving/driven - converts through bore output to intake output
 
-        public static final double FF_G = .7;
-        public static final TunableNumber PID_P = new TunableNumber("Intake/PID_P", 5.0, IS_TUNING);
-        public static final TunableNumber PID_I = new TunableNumber("Intake/PID_I", 0.0, IS_TUNING);
-        public static final TunableNumber PID_D = new TunableNumber("Intake/PID_D", 0.5, IS_TUNING);
-        public static final TunableNumber MAX_VELOCITY = new TunableNumber("Intake/Max_Velocity", 5.0, IS_TUNING);
-        public static final TunableNumber MAX_ACCEL = new TunableNumber("Intake/Max_Accel", 15.0, IS_TUNING);
-        public static final double ABSOLUTE_OFFSET = -0.02538034471-0.02752074068801852-0.02;
+        public static final ArmConfiguration INTAKE_ARM = new ArmConfiguration(
+                "IntakeArm",
+                14,  // motorId
+                0,   // encoderPort
+                0.7, // ffG
+                (-0.02538034471 - 0.02752074068801852 - 0.02 - 0.02274482482), // absoluteOffset
+                18.0 / 30.0 // encoderRatio
+        );
+
         public static final double UP_GOAL = 1.9;
-        public static final TunableNumber DOWN_GOAL = new TunableNumber("Intake/DownGoal", -0.18, IS_TUNING);
+        public static final double DOWN_GOAL = -.18;
     }
 
     public static class HoodConstants{
-        public static final int HOOD_ID = 16;
-        public static final int THROUGH_BORE = 1;
+        public static final double TOLERANCE = 0.01;
 
         public static final boolean IS_TUNING = false;
-        public static final double FF_G = .7;
-        public static final TunableNumber PID_P = new TunableNumber("Hood/PID_P", 5.0, IS_TUNING);
-        public static final TunableNumber PID_I = new TunableNumber("Hood/PID_I", 0.0, IS_TUNING);
-        public static final TunableNumber PID_D = new TunableNumber("Hood/PID_D", 0.5, IS_TUNING);
-        public static final TunableNumber MAX_VELOCITY = new TunableNumber("Hood/Max_Velocity", 5.0, IS_TUNING);
-        public static final TunableNumber MAX_ACCEL = new TunableNumber("Hood/Max_Accel", 15.0, IS_TUNING);
-        public static final double ABSOLUTE_OFFSET = -0.02538034471-0.02752074068801852-0.02;
-        public static final double UP_GOAL = 1.9;
-        public static final TunableNumber DOWN_GOAL = new TunableNumber("Hood/DownGoal", -0.18, IS_TUNING);
+        public static final ArmConfiguration HOOD = new ArmConfiguration(
+                "Hood",
+                16,  // motorId
+                1,   // encoderPort
+                0.7, // ffG
+                0,   // absoluteOffset
+                1.0  // encoderRatio (assuming no ratio for hood)
+        );
     }
 
     public static class SwerveConstants {
         public static final double MAX_SPEED = Units.feetToMeters(16.6); // TODO: is 80% of free speed correct?
-        public static final double TOLERANCE = 2.5;
+        public static final double TOLERANCE = 2.5; // degrees
     }
 
     public static class AutonConstants {

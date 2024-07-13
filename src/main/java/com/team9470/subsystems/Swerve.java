@@ -3,7 +3,7 @@ package com.team9470.subsystems;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
-import com.team9470.subsystems.vision.VisionDevice;
+import com.team9470.FieldLayout;
 import com.team9470.subsystems.vision.VisionPoseAcceptor;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import org.photonvision.EstimatedRobotPose;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -27,10 +26,11 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.function.DoubleSupplier;
 
-import static com.team9470.Constants.*;
+import static com.team9470.Constants.AutonConstants;
+import static com.team9470.Constants.SwerveConstants;
+import static org.photonvision.PhotonUtils.getYawToPose;
 
 public class Swerve extends SubsystemBase {
     private static Swerve instance;
@@ -89,13 +89,35 @@ public class Swerve extends SubsystemBase {
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularSpeedX){
         return this.run(() ->
                 swerveDrive.drive(
-                        new Translation2d(translationX.getAsDouble() * 0.1, translationY.getAsDouble() * 0.1),
-                        angularSpeedX.getAsDouble() * 0.1,
+                        new Translation2d(translationX.getAsDouble() * .01, translationY.getAsDouble() * .01),
+                        angularSpeedX.getAsDouble() * .01,
                         true,
                         false
                 )
         );
     }
+
+    public Command aimAtSpeaker(){
+        SwerveController controller = swerveDrive.getSwerveController();
+        return run(
+                () -> {
+                    setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0,
+                            0,
+                            controller.headingCalculate(getHeading().getRadians(),
+                                    yawToTarget().getRadians()),
+                            getHeading())
+                    );
+                }).until(() -> yawToTarget().minus(getHeading()).getDegrees() < SwerveConstants.TOLERANCE);
+    }
+
+
+    public Rotation2d yawToTarget() {
+        Pose2d targetPos = FieldLayout.handleAllianceFlip(FieldLayout.kSpeakerCenter, isRedAlliance());
+        Pose2d robotPos = getPose();
+        return getYawToPose(robotPos, targetPos);
+    }
+
+
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative)
     {
