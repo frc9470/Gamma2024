@@ -1,7 +1,9 @@
 package com.team9470;
 
 import com.pathplanner.lib.util.PIDConstants;
+import com.team9470.shooter.ShotParameters;
 import com.team9470.subsystems.arm.ArmConfiguration;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -19,13 +21,15 @@ public class Constants {
     public static class ShooterConstants{
         public static final int ID_TOP = 17;
         public static final int ID_BOTTOM = 18;
-        public static final int SHOOTER_PIVOT_ID_1 = 16;
-        public static final double SHOOTER_SHOOT_VOLTAGE = 6;
         public static final double SHOOTER_RATIO = 24.0f/15;
-        public static final double FF_S = 0;
-        public static final double FF_V = 0;
-        public static final double PID_P = 0;
-        public static final double TOLERANCE = 0;
+        public static final double FF_S = 0.29106;
+        public static final double FF_V = 0.0014144;
+        public static final double FF_A = 0.00065971;
+        public static final TunableNumber PID_P = new TunableNumber("Shooter/PID_P", 0.000088945, true);
+        public static final double TOLERANCE = 50;
+        public static final ShotParameters SUBWOOFER = new ShotParameters(2, 5000, .8, new Rotation2d()); // ignore rotation
+        public static final ShotParameters PODIUM = new ShotParameters(FieldLayout.kPodiumX, 6000, .75, new Rotation2d());
+        public static final ShotParameters AMP = null;
     }
 
     public static class IntakeConstants{
@@ -38,26 +42,30 @@ public class Constants {
                 14,  // motorId
                 0,   // encoderPort
                 0.7, // ffG
-                (-0.02538034471 - 0.02752074068801852 - 0.02 - 0.02274482482), // absoluteOffset
+                .42, // absoluteOffset
                 18.0 / 30.0 // encoderRatio
         );
 
         public static final double UP_GOAL = 1.9;
         public static final double DOWN_GOAL = -.18;
+        public static final double INDEXER_GOAL = 2.26;
     }
 
     public static class HoodConstants{
-        public static final double TOLERANCE = 0.01;
+        public static final double TOLERANCE = 0.05;
 
         public static final boolean IS_TUNING = false;
         public static final ArmConfiguration HOOD = new ArmConfiguration(
                 "Hood",
                 16,  // motorId
                 1,   // encoderPort
-                0.7, // ffG
-                0,   // absoluteOffset
+                0.64, // ffG
+                0.64,   // absoluteOffset
                 1.0  // encoderRatio (assuming no ratio for hood)
         );
+
+        public static final double AMP_POS = 1.3;
+        public static final double STEADY_POS = 1;
     }
 
     public static class SwerveConstants {

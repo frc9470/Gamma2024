@@ -10,9 +10,9 @@ import com.team9470.subsystems.*;
 import com.team9470.subsystems.vision.Vision;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 
 public class RobotContainer {
@@ -49,6 +49,19 @@ public class RobotContainer {
 
         xboxController.leftBumper().whileTrue(superstructure.intakeNote());
         xboxController.rightTrigger().whileTrue(superstructure.shootNote());
+        xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.SUBWOOFER));
+        xboxController.x().whileTrue(
+                new SequentialCommandGroup(
+                        shooter.getQuasistatic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(5)),
+                        shooter.getQuasistatic(SysIdRoutine.Direction.kReverse).andThen(new WaitCommand(5)),
+                        shooter.getDynamic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(5)),
+                        shooter.getDynamic(SysIdRoutine.Direction.kReverse)
+                )
+        );
+
+        xboxController.y().whileTrue(indexer.beltForward());
+//        xboxController.povUp().whileTrue(hood.angleCommand(1));
+//        xboxController.povDown().whileTrue(hood.angleCommand(.4));
 //        xboxController.povUp().whileTrue(intakeArm.intakeUp());
 //        xboxController.povDown().whileTrue(intakeArm.intakeDown());
 //        xboxController.povRight().whileTrue(intakeRollers.intakeIn());

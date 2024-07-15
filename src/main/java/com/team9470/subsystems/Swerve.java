@@ -27,6 +27,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import static com.team9470.Constants.AutonConstants;
 import static com.team9470.Constants.SwerveConstants;
@@ -110,6 +111,18 @@ public class Swerve extends SubsystemBase {
                 }).until(() -> yawToTarget().minus(getHeading()).getDegrees() < SwerveConstants.TOLERANCE);
     }
 
+    public Command aimAtYaw(Supplier<Rotation2d> yaw) {
+        SwerveController controller = swerveDrive.getSwerveController();
+        return run(
+                () -> {
+                    setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0,
+                            0,
+                            controller.headingCalculate(getHeading().getRadians(),
+                                    yawToTarget().getRadians()),
+                            getHeading())
+                    );
+                }).until(() -> yaw.get().minus(getHeading()).getDegrees() < SwerveConstants.TOLERANCE);
+    }
 
     public Rotation2d yawToTarget() {
         Pose2d targetPos = FieldLayout.handleAllianceFlip(FieldLayout.kSpeakerCenter, isRedAlliance());

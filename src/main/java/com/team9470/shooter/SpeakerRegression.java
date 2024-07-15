@@ -6,7 +6,7 @@ public class SpeakerRegression {
     };
 
     public static final double[][] DIST_TO_SPEED = new double[][]{
-
+            {1., 2.}
     };
 
     public static final double[][] DIST_TO_YAW = new double[][]{

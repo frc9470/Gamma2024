@@ -17,6 +17,7 @@ public abstract class AbstractArm extends SubsystemBase {
 
     protected boolean init = true;
     protected double goal = 0;
+    protected boolean enabled = true;
 
     protected AbstractArm(ArmConfiguration config) {
         this.config = config;
@@ -31,6 +32,12 @@ public abstract class AbstractArm extends SubsystemBase {
         motor.restoreFactoryDefaults();
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
+
+    protected AbstractArm(ArmConfiguration config, boolean enabled){
+        this(config);
+        this.enabled = enabled;
+    }
+
     @Override
     public void periodic() {
         if (init) {
@@ -45,14 +52,19 @@ public abstract class AbstractArm extends SubsystemBase {
         }
 
         double output = pid.calculate(getPosition(), goal) + ff.calculate(getPosition(), 0);
-        motor.setVoltage(output);
+        if (enabled) motor.setVoltage(output);
 
         updateSmartDashboard();
     }
 
     public double getPosition() {
-        return (encoder.getAbsolutePosition() * config.encoderRatio() + config.absoluteOffset()) * 2 * Math.PI;
+        return (modifyInput(encoder.getAbsolutePosition()) * config.encoderRatio()) * 2 * Math.PI - config.absoluteOffset();
     }
+
+    protected double modifyInput(double input){
+        return input;
+    }
+
 
     public void setGoal(double goal) {
         this.goal = goal;

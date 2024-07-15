@@ -44,6 +44,9 @@ public class InterpolatingTreeMap<K extends InverseInterpolable<K> & Comparable<
     }
 
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> ofDouble(double[][] values) {
+        if (values.length == 0) {
+            return new InterpolatingTreeMap<>();
+        }
         if (values[0].length != 2) {
             throw new IllegalArgumentException("Input array does not have 2 columns");
         }

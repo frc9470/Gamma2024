@@ -30,6 +30,19 @@ public class IntakeArm extends AbstractArm {
     public Command intakeDown (){
         return new InstantCommand(() -> goal = DOWN_GOAL);
     }
+    public Command intakeIndexer (){
+        return new InstantCommand(() -> goal = INDEXER_GOAL);
+    }
+
+    public Command waitReady(){
+        return new Command() {
+
+            @Override
+            public boolean isFinished() {
+                return Math.abs(getPosition() - goal) < 0.04;
+            }
+        };
+    }
 
     // SysID that doesn't work
 

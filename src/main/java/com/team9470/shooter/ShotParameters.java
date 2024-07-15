@@ -3,20 +3,28 @@ package com.team9470.shooter;
 
 import com.team254.lib.util.InterpolatingDouble;
 import com.team9470.FieldLayout;
+import com.team9470.TunableNumber;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * A data class to represent shot parameters for a certain shot.
  */
-public record ShotParameters(double distance, double rpm, double angle, Rotation2d heading) {
+public record ShotParameters(double distance, double rpm, double angle, Rotation2d heading) implements Sendable {
 
     private static final Pose2d SPEAKER_CENTER = FieldLayout.kSpeakerCenter;
     private static final double TO_F_FACTOR = 0.2;
+    private static final boolean tuning = true;
+
+    private static final TunableNumber rpmTune = new TunableNumber("Shooter/rpm", 0.0, tuning);
+    private static final TunableNumber angleTune = new TunableNumber("Shooter/angle", 0.0, tuning);
+    private static final TunableNumber yawTune = new TunableNumber("Shooter/yaw", 0.0, tuning);
 
     /**
      * Calculates the shot parameters based on the provided parameters.
@@ -35,6 +43,9 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
         double distance = targetRelative.getNorm();
         double range;
 
+        if (tuning) return new ShotParameters(distance, rpmTune.get(), angleTune.get(), new Rotation2d(yawTune.get()));
+
+
         if (shootOnMove) {
             double[] adjustedParams = adjustForMovement(yaw, distance, velocity);
             yaw = adjustedParams[0];
@@ -42,6 +53,22 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
         } else {
             range = distance;
         }
+
+        double rpm = getShooterSpeed(range);
+        double angle = getShooterAngle(range);
+        double heading = yaw + getShooterYaw(range);
+
+        return new ShotParameters(distance, rpm, angle, new Rotation2d(heading));
+    }
+
+    public static ShotParameters simple(double distance, double yaw, boolean isRedAlliance){
+        Translation2d target = FieldLayout.handleAllianceFlip(SPEAKER_CENTER.getTranslation(), isRedAlliance);
+
+        double range;
+
+        if (tuning) return new ShotParameters(distance, rpmTune.get(), angleTune.get(), new Rotation2d(yawTune.get()));
+
+        range = distance;
 
         double rpm = getShooterSpeed(range);
         double angle = getShooterAngle(range);
@@ -102,5 +129,10 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
      */
     public static double getShooterYaw(double range) {
         return RegressionMaps.YAW_MAP.getInterpolated(new InterpolatingDouble(range)).value;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleArrayProperty("params", () -> new double[]{distance, rpm, angle, heading.getDegrees()}, (double[] d) -> {});
     }
 }
