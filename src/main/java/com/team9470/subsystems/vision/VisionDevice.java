@@ -36,7 +36,6 @@ public class VisionDevice {
                 PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                 photonCamera,
                 transform// Robot to camera transform (adjust as needed)
-
         );
 
     }

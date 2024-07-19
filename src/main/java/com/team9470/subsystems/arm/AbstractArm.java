@@ -25,7 +25,7 @@ public abstract class AbstractArm extends SubsystemBase {
         this.encoder = new DutyCycleEncoder(config.encoderPort());
         this.ff = new ArmFeedforward(0, config.ffG(), 0);
         this.pid = new ProfiledPIDController(
-                config.pidP().get(), config.pidI().get(), config.pidD().get(),
+                config.pidP().get(), 0, config.pidD().get(),
                 new TrapezoidProfile.Constraints(config.maxVelocity().get(), config.maxAccel().get())
         );
 
@@ -46,8 +46,8 @@ public abstract class AbstractArm extends SubsystemBase {
             init = false;
         }
 
-        if (config.pidP().hasChanged() || config.pidI().hasChanged() || config.pidD().hasChanged() || config.maxVelocity().hasChanged() || config.maxAccel().hasChanged()) {
-            pid.setPID(config.pidP().get(), config.pidI().get(), config.pidD().get());
+        if (config.pidP().hasChanged() || config.pidD().hasChanged() || config.maxVelocity().hasChanged() || config.maxAccel().hasChanged()) {
+            pid.setPID(config.pidP().get(), 0, config.pidD().get());
             pid.setConstraints(new TrapezoidProfile.Constraints(config.maxVelocity().get(), config.maxAccel().get()));
         }
 

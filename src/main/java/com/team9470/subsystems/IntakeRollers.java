@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static com.team9470.Constants.IntakeConstants.*;
+import static com.team9470.Consts.IntakeConstants.*;
 
 public class IntakeRollers extends SubsystemBase {
     private static IntakeRollers instance;

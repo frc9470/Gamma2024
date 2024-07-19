@@ -1,12 +1,11 @@
 package com.team9470.subsystems.vision;
 
-import com.team9470.Constants;
 import com.team9470.subsystems.Swerve;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.List;
 
-import static com.team9470.Constants.VisionConstants;
+import static com.team9470.Consts.VisionConstants;
 
 public class Vision extends SubsystemBase {
     private static Vision instance;

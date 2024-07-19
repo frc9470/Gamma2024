@@ -1,5 +1,6 @@
 package com.team254.lib.util;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,6 +13,7 @@ import java.util.TreeMap;
  */
 public class InterpolatingTreeMap<K extends InverseInterpolable<K> & Comparable<K>, V extends Interpolable<V>>
         extends TreeMap<K, V> {
+    @Serial
     private static final long serialVersionUID = 8347275262778054124L;
 
     final int max_;

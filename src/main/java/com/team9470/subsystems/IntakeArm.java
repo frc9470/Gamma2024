@@ -4,7 +4,7 @@ import com.team9470.subsystems.arm.AbstractArm;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-import static com.team9470.Constants.IntakeConstants.*;
+import static com.team9470.Consts.IntakeConstants.*;
 
 public class IntakeArm extends AbstractArm {
     private static IntakeArm instance;
@@ -30,16 +30,13 @@ public class IntakeArm extends AbstractArm {
     public Command intakeDown (){
         return new InstantCommand(() -> goal = DOWN_GOAL);
     }
-    public Command intakeIndexer (){
-        return new InstantCommand(() -> goal = INDEXER_GOAL);
-    }
 
     public Command waitReady(){
         return new Command() {
 
             @Override
             public boolean isFinished() {
-                return Math.abs(getPosition() - goal) < 0.04;
+                return Math.abs(getPosition() - goal) < 0.06;
             }
         };
     }

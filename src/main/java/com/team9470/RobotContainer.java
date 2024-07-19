@@ -6,13 +6,15 @@
 package com.team9470;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.team9470.subsystems.*;
 import com.team9470.subsystems.vision.Vision;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 
 public class RobotContainer {
@@ -31,35 +33,50 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
     public RobotContainer()
     {
+        initPathplanner();
         configureBindings();
-        autoChooser = AutoBuilder.buildAutoChooser("");
-        SmartDashboard.putData(autoChooser);
+        autoChooser = AutoBuilder.buildAutoChooser("SL Center");
+        SmartDashboard.putData("Auto", autoChooser);
     }
-    
+
+    private void initPathplanner() {
+        NamedCommands.registerCommand("intake", superstructure.intakeNote());
+        NamedCommands.registerCommand("shoot", superstructure.autonShot());
+    }
+
     private void configureBindings() {
         swerve.setDefaultCommand(
                 swerve.driveCommand(
-                        xboxController::getLeftY,
-                    () -> -xboxController.getLeftX(),
-                    () -> -xboxController.getRightX()
+                        () -> -MathUtil.applyDeadband(xboxController.getLeftY(),
+                                Consts.SwerveConstants.DEADBAND),
+                        () -> -MathUtil.applyDeadband(xboxController.getLeftX(),
+                                Consts.SwerveConstants.DEADBAND),
+                        () -> -MathUtil.applyDeadband(xboxController.getRightX(),
+                                Consts.SwerveConstants.DEADBAND)
                 )
         );
 
-        xboxController.a().onTrue(new InstantCommand(swerve::zeroGyro));
+        xboxController.a().onTrue(new InstantCommand(swerve::zeroGyroWithAlliance));
 
         xboxController.leftBumper().whileTrue(superstructure.intakeNote());
-        xboxController.rightTrigger().whileTrue(superstructure.shootNote());
+        xboxController.rightBumper().whileTrue(superstructure.feedShot());
+        xboxController.rightTrigger().whileTrue(superstructure.staticShot(Superstructure.ShotType.AUTO));
+        xboxController.leftTrigger().whileTrue(superstructure.ampShot());
         xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.SUBWOOFER));
-        xboxController.x().whileTrue(
-                new SequentialCommandGroup(
-                        shooter.getQuasistatic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(5)),
-                        shooter.getQuasistatic(SysIdRoutine.Direction.kReverse).andThen(new WaitCommand(5)),
-                        shooter.getDynamic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(5)),
-                        shooter.getDynamic(SysIdRoutine.Direction.kReverse)
-                )
-        );
 
+        xboxController.x().whileTrue(indexer.beltBackward());
         xboxController.y().whileTrue(indexer.beltForward());
+        xboxController.b().whileTrue(swerve.aimAtSpeaker());
+
+
+//        xboxController.x().whileTrue(
+//                new SequentialCommandGroup(
+//                        shooter.getQuasistatic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(2)),
+//                        shooter.getQuasistatic(SysIdRoutine.Direction.kReverse).andThen(new WaitCommand(2)),
+//                        shooter.getDynamic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(2)),
+//                        shooter.getDynamic(SysIdRoutine.Direction.kReverse)
+//                )
+//        );
 //        xboxController.povUp().whileTrue(hood.angleCommand(1));
 //        xboxController.povDown().whileTrue(hood.angleCommand(.4));
 //        xboxController.povUp().whileTrue(intakeArm.intakeUp());
@@ -85,7 +102,7 @@ public class RobotContainer {
     
     public Command getAutonomousCommand()
     {
-        return new InstantCommand();
+        return autoChooser.getSelected();
     }
 }
 

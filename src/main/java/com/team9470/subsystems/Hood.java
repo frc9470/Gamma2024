@@ -5,8 +5,8 @@ import com.team9470.subsystems.arm.AbstractArm;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-import static com.team9470.Constants.HoodConstants.HOOD;
-import static com.team9470.Constants.HoodConstants.TOLERANCE;
+import static com.team9470.Consts.HoodConstants.HOOD;
+import static com.team9470.Consts.HoodConstants.TOLERANCE;
 
 public class Hood extends AbstractArm {
 

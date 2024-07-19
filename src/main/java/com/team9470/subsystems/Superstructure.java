@@ -1,6 +1,6 @@
 package com.team9470.subsystems;
 
-import com.team9470.Constants;
+import com.team9470.Consts;
 import com.team9470.shooter.ShotParameters;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -53,11 +53,11 @@ public class Superstructure extends SubsystemBase {
                     System.err.println("Error while generating shooter parameters, likely caused by lack of data: " + e.getMessage());
                 }
 
-                if (parameters == null || parameters.distance() > 10.4){
-                    hood.setGoal(1);
-                    shooter.setVelocity(STEADY_RPM);
-                    return;
-                }
+//                if (parameters == null || parameters.distance() > 10.4){
+//                    hood.setGoal(1);
+//                    shooter.setVelocity(STEADY_RPM);
+//                    return;
+//                }
             }
             case STEADY -> {
                 hood.setGoal(1);
@@ -65,13 +65,23 @@ public class Superstructure extends SubsystemBase {
                 return;
             }
             case SUBWOOFER -> // for static shots, treat yaw as an adjustment parameter
-                    parameters = Constants.ShooterConstants.SUBWOOFER;
-            case PODIUM -> parameters = Constants.ShooterConstants.PODIUM;
+                    parameters = Consts.ShooterConstants.SUBWOOFER;
+            case PODIUM -> parameters = Consts.ShooterConstants.PODIUM;
             case AMP -> {
-                // we can't use the static shop parameters method here
+                // we can't use the static shot parameters method here
                 // we must mess with the top and bottom roller tuning to achieve the desired spin effect
-                shooter.setVelocity(3000, 5000);
-                hood.setGoal(Constants.HoodConstants.AMP_POS);
+                shooter.setVelocity(1000, 2500);
+                hood.setGoal(Consts.HoodConstants.AMP_POS);
+                return;
+            }
+            case AMP_FLING -> {
+                shooter.setVelocity(1000, 2500);
+                hood.setGoal(0.5);
+                return;
+            }
+            case FEED -> {
+                shooter.setVelocity(7000);
+                hood.setGoal(1.2);
                 return;
             }
         }
@@ -85,17 +95,20 @@ public class Superstructure extends SubsystemBase {
         SmartDashboard.putNumber("FiringParams/CurrentHeading", swerve.getHeading().getDegrees());
     }
 
-    public Command intakeNote(){ // TODO: change beam break to not block intake command
+    public Command intakeNote(){
         return intakeArm.intakeDown().andThen(intakeArm.waitReady()).andThen(
-                intakeRollers.intakeIn()
-                        .alongWith(indexer.beltForward()).until(indexer::hasNote)
-                        .andThen(
-                                indexer.beltStop().alongWith(intakeArm.intakeUp()).alongWith(intakeRollers.intakeStop())
+                        indexer.waitNote(true).deadlineWith(
+                                intakeRollers.intakeIn()
+                                        .alongWith(indexer.beltForward())
                         )
-                ).handleInterrupt(() -> {
+                )
+                .andThen(
+                        indexer.beltStop().alongWith(intakeArm.intakeUp()).alongWith(intakeRollers.intakeStop())
+                )
+                .handleInterrupt(() -> {
                     indexer.setVoltage(0);
                     intakeRollers.setVoltage(0);
-                    intakeArm.setGoal(Constants.IntakeConstants.UP_GOAL);
+                    intakeArm.setGoal(Consts.IntakeConstants.UP_GOAL);
                 });
     }
 
@@ -105,9 +118,9 @@ public class Superstructure extends SubsystemBase {
                     // wait for shooter to spin up
                     shooter.waitReady(),
                     // wait for hood to get to correct angle
-                    hood.waitReady(),
+                    hood.waitReady()
                     // wait for heading to update
-                    swerve.aimAtYaw(() -> parameters.heading())
+//                    swerve.aimAtYaw(() -> parameters.heading())
                 ),
                 indexer.beltForward().until(() -> !indexer.hasNote()),
                 new WaitCommand(0.3),
@@ -127,14 +140,61 @@ public class Superstructure extends SubsystemBase {
                         // wait for heading to update
 //                        swerve.aimAtYaw(() -> swerve.getHeading().plus(parameters.heading()))
                 ),
-                indexer.beltForward().until(() -> !indexer.hasNote()),
+                new WaitCommand(1).deadlineWith(indexer.beltMaxForward()),
+                new InstantCommand(() -> shotType = defaultType)
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
+    }
+
+    public Command autonShot(){
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> shotType = ShotType.SUBWOOFER),
+                new ParallelCommandGroup(
+                        // wait for shooter to spin up
+                        shooter.waitReady(),
+                        // wait for hood to get to correct angle
+                        hood.waitReady()
+                        // wait for heading to update
+//                        swerve.aimAtYaw(() -> swerve.getHeading().plus(parameters.heading()))
+                ),
+                new WaitCommand(1).deadlineWith(indexer.beltMaxForward())
+        );
+    }
+
+    public Command ampShot(){
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> shotType = ShotType.AMP),
+                new ParallelCommandGroup(
+                        // wait for shooter to spin up
+                        shooter.waitReady(),
+                        // wait for hood to get to correct angle
+                        hood.waitReady()
+                ),
+                indexer.beltMaxForward()
+                        .alongWith(new InstantCommand(() -> shotType = ShotType.AMP_FLING)),
+                new WaitCommand(1),
+                new InstantCommand(() -> shotType = defaultType)
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
+    }
+
+    public Command feedShot(){
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> shotType = ShotType.FEED),
+                new ParallelCommandGroup(
+                        // wait for shooter to spin up
+                        shooter.waitReady(),
+                        // wait for hood to get to correct angle
+                        hood.waitReady(),
+                        // wait for heading to update
+                        swerve.aimAtFeed()
+                ),
+                indexer.beltMaxForward(),
                 new WaitCommand(1),
                 indexer.beltStop(),
                 new InstantCommand(() -> shotType = defaultType)
-        ).handleInterrupt(() -> shotType = defaultType);
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
     }
 
     public enum ShotType {
-        AUTO, SUBWOOFER, STEADY, PODIUM, AMP
+        AUTO, SUBWOOFER, STEADY, PODIUM, AMP, AMP_FLING, FEED
     }
 }

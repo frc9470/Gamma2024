@@ -8,12 +8,13 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
-public class Constants {
+public class Consts {
     public static class IndexerConstants{
         public static final int INDEX_ID_1 = 19;
         public static final int INDEX_ID_2 = 20;
         public static final int BEAM_BREAK_ID = 2;
         public static final double BELT_FORWARD_VOLTAGE = 6;
+        public static final double BELT_MAX_FORWARD_VOLTAGE = 12;
         public static final double BELT_BACKWARD_VOLTAGE = -6;
 
     }
@@ -27,7 +28,7 @@ public class Constants {
         public static final double FF_A = 0.00065971;
         public static final TunableNumber PID_P = new TunableNumber("Shooter/PID_P", 0.000088945, true);
         public static final double TOLERANCE = 50;
-        public static final ShotParameters SUBWOOFER = new ShotParameters(2, 5000, .8, new Rotation2d()); // ignore rotation
+        public static final ShotParameters SUBWOOFER = new ShotParameters(2, 5000, 1.3, new Rotation2d()); // ignore rotation
         public static final ShotParameters PODIUM = new ShotParameters(FieldLayout.kPodiumX, 6000, .75, new Rotation2d());
         public static final ShotParameters AMP = null;
     }
@@ -42,9 +43,9 @@ public class Constants {
                 14,  // motorId
                 0,   // encoderPort
                 0.7, // ffG
-                .42, // absoluteOffset
-                18.0 / 30.0 // encoderRatio
-        );
+                0.792, // absoluteOffset
+                18.0 / 30.0, // encoderRatio
+                5); // PID_$
 
         public static final double UP_GOAL = 1.9;
         public static final double DOWN_GOAL = -.18;
@@ -61,16 +62,17 @@ public class Constants {
                 1,   // encoderPort
                 0.64, // ffG
                 0.64,   // absoluteOffset
-                1.0  // encoderRatio (assuming no ratio for hood)
-        );
+                1.0,  // encoderRatio (assuming no ratio for hood)
+                10);
 
-        public static final double AMP_POS = 1.3;
+        public static final double AMP_POS = 1.35;
         public static final double STEADY_POS = 1;
     }
 
     public static class SwerveConstants {
         public static final double MAX_SPEED = Units.feetToMeters(16.6); // TODO: is 80% of free speed correct?
         public static final double TOLERANCE = 2.5; // degrees
+        public static final double DEADBAND = 0.1;
     }
 
     public static class AutonConstants {
@@ -80,7 +82,7 @@ public class Constants {
 
     public static class VisionConstants {
         public static final Transform3d FRONT_LEFT_CAMERA_OFFSET = new Transform3d(9.611, 9.481,7.495, new Rotation3d(0, 28.125, 30));
-        public static final Transform3d FRONT_RIGHT_CAMERA_OFFSET = new Transform3d(9.611, -9.481,7.495, new Rotation3d(0, 28.125, -30));
+        public static final Transform3d FRONT_RIGHT_CAMERA_OFFSET = new Transform3d(9.611, -9.481,7.495, new Rotation3d(3.14, 28.125, -30));
         public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(9.611, 0,0, new Rotation3d(0, 0, 0));
 
 

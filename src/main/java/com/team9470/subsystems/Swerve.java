@@ -1,9 +1,11 @@
 package com.team9470.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.team9470.FieldLayout;
+import com.team9470.LogUtil;
 import com.team9470.subsystems.vision.VisionPoseAcceptor;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,9 +17,11 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.photonvision.PhotonUtils;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -29,8 +33,8 @@ import java.io.IOException;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import static com.team9470.Constants.AutonConstants;
-import static com.team9470.Constants.SwerveConstants;
+import static com.team9470.Consts.AutonConstants;
+import static com.team9470.Consts.SwerveConstants;
 import static org.photonvision.PhotonUtils.getYawToPose;
 
 public class Swerve extends SubsystemBase {
@@ -90,8 +94,9 @@ public class Swerve extends SubsystemBase {
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularSpeedX){
         return this.run(() ->
                 swerveDrive.drive(
-                        new Translation2d(translationX.getAsDouble() * .01, translationY.getAsDouble() * .01),
-                        angularSpeedX.getAsDouble() * .01,
+                        new Translation2d(translationX.getAsDouble()  * swerveDrive.getMaximumVelocity(),
+                                translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
+                        angularSpeedX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
                         true,
                         false
                 )
@@ -121,13 +126,26 @@ public class Swerve extends SubsystemBase {
                                     yawToTarget().getRadians()),
                             getHeading())
                     );
-                }).until(() -> yaw.get().minus(getHeading()).getDegrees() < SwerveConstants.TOLERANCE);
+                    SmartDashboard.putNumber("AimAtYaw/HeadingError", yaw.get().getDegrees() - getHeading().getDegrees());
+                }).until(() -> yaw.get().getDegrees() - getHeading().getDegrees() < SwerveConstants.TOLERANCE);
+    }
+
+    public Command aimAtFeed() {
+        Rotation2d targetYaw = FieldLayout.handleAllianceFlip(Rotation2d.fromDegrees(140), isRedAlliance());
+        // vision
+        Rotation2d targetYawVision = PhotonUtils.getYawToPose(getPose(), new Pose2d(FieldLayout.handleAllianceFlip(FieldLayout.kAmpCenter, isRedAlliance()), new Rotation2d()));
+        return aimAtYaw(() -> targetYaw);
     }
 
     public Rotation2d yawToTarget() {
         Pose2d targetPos = FieldLayout.handleAllianceFlip(FieldLayout.kSpeakerCenter, isRedAlliance());
         Pose2d robotPos = getPose();
         return getYawToPose(robotPos, targetPos);
+    }
+
+    public Command driveToAmp(){
+        Pose2d targetPos = new Pose2d(FieldLayout.handleAllianceFlip(FieldLayout.kAmpCenter, isRedAlliance()), new Rotation2d());
+        return AutoBuilder.pathfindToPose(targetPos, new PathConstraints(1.0, 1.0, 1.0, 1.0), 0);
     }
 
 
@@ -147,7 +165,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+        LogUtil.recordPose2d("swerve/Pose2D", getPose());
     }
 
     @Override
