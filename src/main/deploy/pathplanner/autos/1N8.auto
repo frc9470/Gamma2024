@@ -5,12 +5,18 @@
       "x": 1.3145049577136192,
       "y": 5.471498438367249
     },
-    "rotation": 180.0
+    "rotation": 179.8455066460937
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
         {
           "type": "path",
           "data": {
@@ -20,6 +26,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "1N",
   "choreoAuto": false
 }

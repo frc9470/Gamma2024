@@ -2,6 +2,7 @@ package com.team9470.subsystems;
 
 import com.team9470.Util;
 import com.team9470.subsystems.arm.AbstractArm;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -28,6 +29,7 @@ public class Hood extends AbstractArm {
     public void periodic() {
         super.periodic();
         goal = Util.clamp(goal, 0.1, 1.5);
+        SmartDashboard.putBoolean("Hood/READY", Math.abs(getPosition() - goal) < TOLERANCE);
     }
 
     public Command waitReady() {

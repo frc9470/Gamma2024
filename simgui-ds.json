@@ -8,18 +8,18 @@
     {
       "axisConfig": [
         {
-          "decKey": 82,
-          "incKey": 87
+          "decKey": 65,
+          "incKey": 83
         },
         {
-          "decKey": 83,
-          "incKey": 65
+          "decKey": 87,
+          "incKey": 82
         },
         {},
         {},
         {
-          "decKey": 262,
-          "incKey": 263
+          "decKey": 263,
+          "incKey": 262
         }
       ],
       "axisCount": 5,
@@ -95,5 +95,6 @@
     {
       "guid": "Keyboard0"
     }
-  ]
+  ],
+  "useEnableDisableHotkeys": true
 }

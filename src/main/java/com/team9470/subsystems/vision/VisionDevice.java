@@ -37,6 +37,7 @@ public class VisionDevice {
                 photonCamera,
                 transform// Robot to camera transform (adjust as needed)
         );
+        photonPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
 
     }
 
@@ -50,6 +51,10 @@ public class VisionDevice {
         Pose3d robotPose = estimatedPose.estimatedPose;
         Pose3d cameraPose = robotPose.plus(photonPoseEstimator.getRobotToCameraTransform());
         double timestamp = estimatedPose.timestampSeconds;
+
+        if(photonCamera.getLatestResult().getTargets().size() < 2){
+            if (photonCamera.getLatestResult().getTargets().get(0).getPoseAmbiguity() > 0.2) return;
+        }
 
         double std_dev_multiplier = 1.0;
 
@@ -114,14 +119,14 @@ public class VisionDevice {
 
     private void logVisionData(List<Pose3d> tagPoses, double xyStdDev, Pose2d camera_pose, Pose2d robotPose, double timestamp) {
 
-        LogUtil.recordPose3d("Vision " + photonCamera.getName() + "/Tag Poses", tagPoses.toArray(new Pose3d[0]));
-        SmartDashboard.putNumber("Vision " + photonCamera.getName() + "/N Tags Seen", tagPoses.size());
-        SmartDashboard.putNumber("Vision " + photonCamera.getName() + "/Calculated STDev", xyStdDev);
-        LogUtil.recordPose2d("Vision " + photonCamera.getName() + "/Camera Pose", camera_pose);
+        LogUtil.recordPose3d("Vision/" + photonCamera.getName() + "/Tag Poses", tagPoses.toArray(new Pose3d[0]));
+        SmartDashboard.putNumber("Vision/" + photonCamera.getName() + "/N Tags Seen", tagPoses.size());
+        SmartDashboard.putNumber("Vision/" + photonCamera.getName() + "/Calculated STDev", xyStdDev);
+        LogUtil.recordPose2d("Vision/" + photonCamera.getName() + "/Camera Pose", camera_pose);
         LogUtil.recordPose2d(
-                "Vision " + photonCamera.getName() + "/Robot Pose", robotPose);
+                "Vision/" + photonCamera.getName() + "/Robot Pose", robotPose);
         LogUtil.recordPose2d(
-                "Vision " + photonCamera.getName() + "/Relevant Pose Estimate",
+                "Vision/" + photonCamera.getName() + "/Relevant Pose Estimate",
                 Swerve.getInstance().getPose());
     }
 

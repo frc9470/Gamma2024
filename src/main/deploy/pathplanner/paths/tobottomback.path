@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.698673201421158,
+        "y": 4.098234579741219
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.906663751661518,
+        "y": 4.118306499514688
+      },
+      "isLocked": false,
+      "linkedName": "botnote"
+    },
+    {
+      "anchor": {
+        "x": 0.7547478104215469,
+        "y": 4.4766913376419355
+      },
+      "prevControl": {
+        "x": 1.7305519101778943,
+        "y": 4.185173425902407
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "botnoteclose"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 120.16489659272254,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "2Note",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

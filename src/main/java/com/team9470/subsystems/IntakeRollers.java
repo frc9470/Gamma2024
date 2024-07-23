@@ -36,4 +36,8 @@ public class IntakeRollers extends SubsystemBase {
     public Command intakeStop (){
         return new InstantCommand(() -> setVoltage(0f));
     }
+
+    public Command intakeOut(){
+        return this.runEnd(() -> setVoltage(-INTAKE_TAKE_IN_VOLTAGE.get()), () -> setVoltage(0f));
+    }
 }

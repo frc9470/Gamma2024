@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2978311777114868,
-      "y": 5.542400360107422
+      "x": 0.7430045749025591,
+      "y": 6.628434922858454
     },
-    "rotation": 180.00000000000003
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
@@ -16,16 +16,10 @@
           "data": {
             "name": "shoot"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SL Center"
-          }
         }
       ]
     }
   },
-  "folder": null,
-  "choreoAuto": true
+  "folder": "1NS",
+  "choreoAuto": false
 }

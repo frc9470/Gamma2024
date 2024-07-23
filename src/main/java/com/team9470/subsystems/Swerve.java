@@ -92,14 +92,16 @@ public class Swerve extends SubsystemBase {
 //    }
 
     public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularSpeedX){
-        return this.run(() ->
+        return this.run(() ->{
+            double invert = isRedAlliance() ? -1 : 1;
                 swerveDrive.drive(
-                        new Translation2d(translationX.getAsDouble()  * swerveDrive.getMaximumVelocity(),
-                                translationY.getAsDouble() * swerveDrive.getMaximumVelocity()),
+                        new Translation2d(translationX.getAsDouble()  * swerveDrive.getMaximumVelocity() * invert,
+                                translationY.getAsDouble() * swerveDrive.getMaximumVelocity() * invert),
                         angularSpeedX.getAsDouble() * swerveDrive.getMaximumAngularVelocity(),
                         true,
                         false
-                )
+                );
+            }
         );
     }
 
@@ -134,6 +136,7 @@ public class Swerve extends SubsystemBase {
         Rotation2d targetYaw = FieldLayout.handleAllianceFlip(Rotation2d.fromDegrees(140), isRedAlliance());
         // vision
         Rotation2d targetYawVision = PhotonUtils.getYawToPose(getPose(), new Pose2d(FieldLayout.handleAllianceFlip(FieldLayout.kAmpCenter, isRedAlliance()), new Rotation2d()));
+        SmartDashboard.putNumber("AimAtYaw/TargetYaw", targetYaw.getDegrees());
         return aimAtYaw(() -> targetYaw);
     }
 
@@ -166,6 +169,7 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         LogUtil.recordPose2d("swerve/Pose2D", getPose());
+        LogUtil.periodicWarning(() -> getHeading().getDegrees() == 0, "[WARNING] The swerve gyroscope is giving a reading of exactly zero, meaning that it is likely DEAD or has been REBOOTED. The robot will be in robot oriented mode for the remainder of the match or until the NavX reconnects, where it will RESET the zero. Ask Tycho if you need help troubleshooting this issue.");
     }
 
     @Override

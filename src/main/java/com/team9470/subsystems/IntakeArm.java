@@ -36,7 +36,7 @@ public class IntakeArm extends AbstractArm {
 
             @Override
             public boolean isFinished() {
-                return Math.abs(getPosition() - goal) < 0.06;
+                return Math.abs(getPosition() - goal) < 0.2;
             }
         };
     }

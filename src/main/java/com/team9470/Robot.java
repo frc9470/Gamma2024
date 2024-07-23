@@ -15,19 +15,22 @@ public class Robot extends TimedRobot
     private Command autonomousCommand;
     
     private RobotContainer robotContainer;
+    boolean enabled = false;
     
     
     @Override
     public void robotInit() {
         URCL.start();
         robotContainer = new RobotContainer();
+        LogUtil.periodicWarning(() -> !enabled && robotContainer.getAutonomousCommand().getName().equals("None auto command"), "[WARNING] NO AUTONOMOUS COMMAND SET. ROBOT WILL NOT MOVE AUTONOMOUSLY. \n[WARNING]SET AN AUTONOMOUS COMMAND VIA SHUFFLEBOARD -> SmartDashboard/AutoChooser");
     }
-    
-    
+
+    int a = 0;
     @Override
     public void robotPeriodic()
     {
         CommandScheduler.getInstance().run();
+        LogUtil.periodic();
     }
     
     
@@ -40,7 +43,9 @@ public class Robot extends TimedRobot
     
     
     @Override
-    public void disabledExit() {}
+    public void disabledExit() {
+        enabled = true;
+    }
     
     
     @Override

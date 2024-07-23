@@ -5,7 +5,6 @@
 
 package com.team9470;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.team9470.subsystems.*;
 import com.team9470.subsystems.vision.Vision;
@@ -35,8 +34,8 @@ public class RobotContainer {
     {
         initPathplanner();
         configureBindings();
-        autoChooser = AutoBuilder.buildAutoChooser("SL Center");
-        SmartDashboard.putData("Auto", autoChooser);
+        autoChooser = Util.buildAutoChooser("", (String name) -> name.contains("N"));
+        SmartDashboard.putData("AutoChooser", autoChooser);
     }
 
     private void initPathplanner() {
@@ -56,26 +55,34 @@ public class RobotContainer {
                 )
         );
 
-        xboxController.a().onTrue(new InstantCommand(swerve::zeroGyroWithAlliance));
-
         xboxController.leftBumper().whileTrue(superstructure.intakeNote());
         xboxController.rightBumper().whileTrue(superstructure.feedShot());
-        xboxController.rightTrigger().whileTrue(superstructure.staticShot(Superstructure.ShotType.AUTO));
+        xboxController.rightTrigger().whileTrue(superstructure.staticShot(Superstructure.ShotType.SUBWOOFER));
         xboxController.leftTrigger().whileTrue(superstructure.ampShot());
-        xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.SUBWOOFER));
 
-        xboxController.x().whileTrue(indexer.beltBackward());
+        xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
+        xboxController.povLeft().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM_SIDE));
+        xboxController.povRight().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM_SIDE));
+        xboxController.povDown().whileTrue(superstructure.staticShot(Superstructure.ShotType.AUTO));
+
+        xboxController.a().onTrue(new InstantCommand(swerve::zeroGyroWithAlliance));
+
+        xboxController.x().whileTrue(superstructure.reverse());
         xboxController.y().whileTrue(indexer.beltForward());
-        xboxController.b().whileTrue(swerve.aimAtSpeaker());
+        xboxController.b().whileTrue(intakeRollers.intakeOut());
 
 
 //        xboxController.x().whileTrue(
-//                new SequentialCommandGroup(
-//                        shooter.getQuasistatic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(2)),
-//                        shooter.getQuasistatic(SysIdRoutine.Direction.kReverse).andThen(new WaitCommand(2)),
-//                        shooter.getDynamic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(2)),
+//                        shooter.getQuasistatic(SysIdRoutine.Direction.kForward)
+//        );
+//        xboxController.y().whileTrue(
+//                shooter.getQuasistatic(SysIdRoutine.Direction.kReverse)
+//        );
+//        xboxController.b().whileTrue(
+//                shooter.getDynamic(SysIdRoutine.Direction.kForward)
+//        );
+//        xboxController.a().whileTrue(
 //                        shooter.getDynamic(SysIdRoutine.Direction.kReverse)
-//                )
 //        );
 //        xboxController.povUp().whileTrue(hood.angleCommand(1));
 //        xboxController.povDown().whileTrue(hood.angleCommand(.4));

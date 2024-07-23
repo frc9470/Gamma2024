@@ -12,10 +12,27 @@ import org.ejml.simple.SimpleEVD;
 import org.ejml.simple.SimpleMatrix;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
 
 public class LogUtil {
+    private static Map<Supplier<Boolean>, String> periodicLogs = new HashMap<>();
+    private static int count = 0;
+
+    /**
+     * should be called periodically (every 20 ms)
+     */
+    public static void periodic(){
+        for(Map.Entry<Supplier<Boolean>, String> entry : periodicLogs.entrySet()){
+            if(entry.getKey().get() && count % 100 == 0){
+                System.err.println("[WARNING] " + entry.getValue());
+            }
+        }
+        count += 1;
+    }
 
     public static void recordTranslation2d(String key, Translation2d translation) {
         SmartDashboard.putNumberArray(key, new double[] {translation.getX(), translation.getY()});
@@ -96,5 +113,9 @@ public class LogUtil {
             recordPose2d(key + " confidence interval b1", b1);
             recordPose2d(key + " confidence interval b2", b2);
         }
+    }
+
+    public static void periodicWarning(Supplier<Boolean> trigger, String message) {
+
     }
 }

@@ -5776,50 +5776,6 @@
             "circleObstacles": [],
             "eventMarkers": [],
             "isTrajectoryStale": false
-        },
-        "2 Note": {
-            "waypoints": [
-                {
-                    "x": 1.2982239723205566,
-                    "y": 5.5577826499938965,
-                    "heading": 0,
-                    "isInitialGuess": false,
-                    "translationConstrained": true,
-                    "headingConstrained": true,
-                    "controlIntervalCount": 40
-                },
-                {
-                    "x": 2.4632580280303955,
-                    "y": 5.544543743133545,
-                    "heading": 0,
-                    "isInitialGuess": false,
-                    "translationConstrained": true,
-                    "headingConstrained": true,
-                    "controlIntervalCount": 40
-                }
-            ],
-            "trajectory": [],
-            "trajectoryWaypoints": [],
-            "constraints": [
-                {
-                    "scope": [
-                        "first"
-                    ],
-                    "type": "StopPoint"
-                },
-                {
-                    "scope": [
-                        "last"
-                    ],
-                    "type": "StopPoint"
-                }
-            ],
-            "usesControlIntervalGuessing": true,
-            "defaultControlIntervalCount": 40,
-            "usesDefaultFieldObstacles": true,
-            "circleObstacles": [],
-            "eventMarkers": [],
-            "isTrajectoryStale": true
         }
     },
     "splitTrajectoriesAtStopPoints": false,

@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6845809817314147,
+      "y": 4.447708606719971
+    },
+    "rotation": -58.78159992605113
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Sweep"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "1N",
+  "choreoAuto": true
+}

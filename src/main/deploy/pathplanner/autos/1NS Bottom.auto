@@ -2,24 +2,24 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6845809817314147,
-      "y": 4.447708606719971
+      "x": 0.7467897818220371,
+      "y": 4.475283053495318
     },
-    "rotation": -58.78159992605113
+    "rotation": 120.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Sweep"
+            "name": "shoot"
           }
         }
       ]
     }
   },
-  "folder": null,
-  "choreoAuto": true
+  "folder": "1NS",
+  "choreoAuto": false
 }

@@ -23,13 +23,17 @@ public class Consts {
         public static final int ID_TOP = 17;
         public static final int ID_BOTTOM = 18;
         public static final double SHOOTER_RATIO = 24.0f/15;
-        public static final double FF_S = 0.29106;
-        public static final double FF_V = 0.0014144;
-        public static final double FF_A = 0.00065971;
-        public static final TunableNumber PID_P = new TunableNumber("Shooter/PID_P", 0.000088945, true);
+        public static final double FF_S = 0.15681;
+        public static final double FF_V = 0.0013954;
+        public static final double FF_A = 0.00052151;
+        public static final double FF2_S = 0.099739;
+        public static final double FF2_V = 0.0013913;
+        public static final double FF2_A = 0.0005497;
+        public static final TunableNumber PID_P = new TunableNumber("Shooter/PID_P", 0.0009259259259, true);
         public static final double TOLERANCE = 50;
-        public static final ShotParameters SUBWOOFER = new ShotParameters(2, 5000, 1.3, new Rotation2d()); // ignore rotation
-        public static final ShotParameters PODIUM = new ShotParameters(FieldLayout.kPodiumX, 6000, .75, new Rotation2d());
+        public static final ShotParameters SUBWOOFER = new ShotParameters(1.1, 5400, 1.3, new Rotation2d()); // ignore rotation
+        public static final ShotParameters PODIUM = new ShotParameters(2.63, 5400, 0.59, new Rotation2d());
+        public static final ShotParameters PODIUM_SIDE = new ShotParameters(2.97, 5400, 1, new Rotation2d());
         public static final ShotParameters AMP = null;
     }
 
@@ -49,7 +53,6 @@ public class Consts {
 
         public static final double UP_GOAL = 1.9;
         public static final double DOWN_GOAL = -.18;
-        public static final double INDEXER_GOAL = 2.26;
     }
 
     public static class HoodConstants{
@@ -61,7 +64,7 @@ public class Consts {
                 16,  // motorId
                 1,   // encoderPort
                 0.64, // ffG
-                0.64,   // absoluteOffset
+                0.64+.42,   // absoluteOffset
                 1.0,  // encoderRatio (assuming no ratio for hood)
                 10);
 
@@ -81,8 +84,8 @@ public class Consts {
     }
 
     public static class VisionConstants {
-        public static final Transform3d FRONT_LEFT_CAMERA_OFFSET = new Transform3d(9.611, 9.481,7.495, new Rotation3d(0, 28.125, 30));
-        public static final Transform3d FRONT_RIGHT_CAMERA_OFFSET = new Transform3d(9.611, -9.481,7.495, new Rotation3d(3.14, 28.125, -30));
+        public static final Transform3d FRONT_LEFT_CAMERA_OFFSET = new Transform3d(Units.inchesToMeters(9.611), Units.inchesToMeters(9.481),Units.inchesToMeters(7.495), new Rotation3d(3.14, 0.49, 0.52));
+        public static final Transform3d FRONT_RIGHT_CAMERA_OFFSET = new Transform3d(9.611, -9.481,7.495, new Rotation3d(0, 0.49, -0.52));
         public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(9.611, 0,0, new Rotation3d(0, 0, 0));
 
 

@@ -27,7 +27,8 @@ public class Shooter extends SubsystemBase {
     public final CANSparkMax bottom = new CANSparkMax(ID_BOTTOM, CANSparkMax.MotorType.kBrushless);
     public final RelativeEncoder topEncoder = top.getEncoder();
     public final RelativeEncoder bottomEncoder = bottom.getEncoder();
-    public SimpleMotorFeedforward ff = new SimpleMotorFeedforward(FF_S, FF_V, FF_A);
+    public SimpleMotorFeedforward ffTOP = new SimpleMotorFeedforward(FF_S, FF_V, FF_A);
+    public SimpleMotorFeedforward ffBOT = new SimpleMotorFeedforward(FF2_S, FF2_V, FF2_A);
     public final PIDController TOP_PID = new PIDController(PID_P.get(), 0, 0);
     public final PIDController BOTTOM_PID = new PIDController(PID_P.get(), 0, 0);
     private double topSetpoint = 0;
@@ -44,11 +45,11 @@ public class Shooter extends SubsystemBase {
 
     private Shooter(){
         top.restoreFactoryDefaults();
-        top.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        top.setIdleMode(CANSparkBase.IdleMode.kCoast);
         topEncoder.setVelocityConversionFactor(SHOOTER_RATIO);
 
         bottom.restoreFactoryDefaults();
-        bottom.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        bottom.setIdleMode(CANSparkBase.IdleMode.kCoast);
         bottomEncoder.setVelocityConversionFactor(SHOOTER_RATIO);
         bottom.setInverted(true);
     }
@@ -62,9 +63,9 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        double output = ff.calculate(topSetpoint) + TOP_PID.calculate(topEncoder.getVelocity(), topSetpoint);
+        double output = ffTOP.calculate(topSetpoint) + TOP_PID.calculate(topEncoder.getVelocity(), topSetpoint);
         top.setVoltage(output);
-        bottom.setVoltage(ff.calculate(bottomSetpoint) + BOTTOM_PID.calculate(bottomEncoder.getVelocity(), bottomSetpoint));
+        bottom.setVoltage(ffBOT.calculate(bottomSetpoint) + BOTTOM_PID.calculate(bottomEncoder.getVelocity(), bottomSetpoint));
 
         if(PID_P.hasChanged()){
             TOP_PID.setP(PID_P.get());
@@ -75,6 +76,8 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter/Bottom Setpoint", bottomSetpoint);
         SmartDashboard.putNumber("Shooter/Top Velocity", topEncoder.getVelocity());
         SmartDashboard.putNumber("Shooter/Bottom Velocity", bottomEncoder.getVelocity());
+        SmartDashboard.putBoolean("Shooter/TOP READY", Math.abs(topEncoder.getVelocity() - topSetpoint) < TOLERANCE);
+        SmartDashboard.putBoolean("Shooter/BOTTOM READY", Math.abs(bottomEncoder.getVelocity() - bottomSetpoint) < TOLERANCE);
     }
 
     public void setVelocity(double top, double bottom){
@@ -95,8 +98,8 @@ public class Shooter extends SubsystemBase {
         return new Command() {
             @Override
             public boolean isFinished() {
-                return Math.abs(topEncoder.getVelocity() - topSetpoint) < TOLERANCE
-                        || Math.abs(bottomEncoder.getVelocity() - bottomSetpoint) < TOLERANCE;
+                return Math.abs(topSetpoint - topEncoder.getVelocity())  < TOLERANCE
+                        && Math.abs(bottomSetpoint -bottomEncoder.getVelocity()) < TOLERANCE;
             }
         };
     }

@@ -1,10 +1,17 @@
 package com.team9470;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Contains basic functions that are used often.
@@ -188,6 +195,44 @@ public class Util {
 
     public static double quaternionTo2dRadians(double w, double x, double y, double z) {
         return new Rotation3d(new Quaternion(w, x, y, z)).toRotation2d().getRadians();
+    }
+
+    public static SendableChooser<Command> buildAutoChooser(String defaultAutoName, Predicate<String> filter) {
+        if (!AutoBuilder.isConfigured()) {
+            throw new RuntimeException(
+                    "AutoBuilder was not configured before attempting to build an auto chooser");
+        }
+
+        SendableChooser<Command> chooser = new SendableChooser<>();
+        List<String> autoNames = AutoBuilder.getAllAutoNames();
+
+        PathPlannerAuto defaultOption = null;
+        List<PathPlannerAuto> options = new ArrayList<>();
+
+        for (String autoName : autoNames) {
+            if (!filter.test(autoName)) {
+                continue;
+            }
+            PathPlannerAuto auto = new PathPlannerAuto(autoName);
+
+            if (!defaultAutoName.isEmpty() && defaultAutoName.equals(autoName)) {
+                defaultOption = auto;
+            } else {
+                options.add(auto);
+            }
+        }
+
+        if (defaultOption == null) {
+            Command defaultCommand = Commands.none();
+            defaultCommand.setName("None auto command");
+            chooser.setDefaultOption("None", defaultCommand);
+        } else {
+            chooser.setDefaultOption(defaultOption.getName(), defaultOption);
+        }
+
+        options.forEach(auto -> chooser.addOption(auto.getName(), auto));
+
+        return chooser;
     }
 }
 

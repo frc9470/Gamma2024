@@ -67,6 +67,7 @@ public class Superstructure extends SubsystemBase {
             case SUBWOOFER -> // for static shots, treat yaw as an adjustment parameter
                     parameters = Consts.ShooterConstants.SUBWOOFER;
             case PODIUM -> parameters = Consts.ShooterConstants.PODIUM;
+            case PODIUM_SIDE -> parameters = Consts.ShooterConstants.PODIUM_SIDE;
             case AMP -> {
                 // we can't use the static shot parameters method here
                 // we must mess with the top and bottom roller tuning to achieve the desired spin effect
@@ -74,15 +75,14 @@ public class Superstructure extends SubsystemBase {
                 hood.setGoal(Consts.HoodConstants.AMP_POS);
                 return;
             }
-            case AMP_FLING -> {
-                shooter.setVelocity(1000, 2500);
-                hood.setGoal(0.5);
-                return;
-            }
             case FEED -> {
-                shooter.setVelocity(7000);
+                shooter.setVelocity(5400);
                 hood.setGoal(1.2);
                 return;
+            }
+            case REVERSE -> {
+                shooter.setVelocity(-3000);
+                hood.setGoal(0.7);
             }
         }
 
@@ -96,11 +96,10 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command intakeNote(){
-        return intakeArm.intakeDown().andThen(intakeArm.waitReady()).andThen(
-                        indexer.waitNote(true).deadlineWith(
-                                intakeRollers.intakeIn()
-                                        .alongWith(indexer.beltForward())
-                        )
+        return intakeArm.intakeDown().andThen(intakeArm.waitReady())
+                .andThen(
+                        intakeRollers.intakeIn()
+                                .alongWith(indexer.beltForward()).until(indexer::hasNote)
                 )
                 .andThen(
                         indexer.beltStop().alongWith(intakeArm.intakeUp()).alongWith(intakeRollers.intakeStop())
@@ -154,9 +153,8 @@ public class Superstructure extends SubsystemBase {
                         // wait for hood to get to correct angle
                         hood.waitReady()
                         // wait for heading to update
-//                        swerve.aimAtYaw(() -> swerve.getHeading().plus(parameters.heading()))
                 ),
-                new WaitCommand(1).deadlineWith(indexer.beltMaxForward())
+                indexer.beltMaxForward().until(() -> !indexer.hasNote())
         );
     }
 
@@ -170,9 +168,6 @@ public class Superstructure extends SubsystemBase {
                         hood.waitReady()
                 ),
                 indexer.beltMaxForward()
-                        .alongWith(new InstantCommand(() -> shotType = ShotType.AMP_FLING)),
-                new WaitCommand(1),
-                new InstantCommand(() -> shotType = defaultType)
         ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
     }
 
@@ -187,14 +182,18 @@ public class Superstructure extends SubsystemBase {
                         // wait for heading to update
                         swerve.aimAtFeed()
                 ),
-                indexer.beltMaxForward(),
-                new WaitCommand(1),
-                indexer.beltStop(),
-                new InstantCommand(() -> shotType = defaultType)
+                indexer.beltMaxForward()
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
+    }
+
+    public Command reverse(){
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> shotType = ShotType.REVERSE),
+                indexer.beltBackward()
         ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
     }
 
     public enum ShotType {
-        AUTO, SUBWOOFER, STEADY, PODIUM, AMP, AMP_FLING, FEED
+        AUTO, SUBWOOFER, STEADY, PODIUM, PODIUM_SIDE, AMP, FEED, REVERSE
     }
 }
