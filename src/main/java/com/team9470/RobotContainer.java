@@ -22,7 +22,6 @@ public class RobotContainer {
     private final Swerve swerve = Swerve.getInstance();
     private final Hood hood = Hood.getInstance();
     private final Shooter shooter = Shooter.getInstance();
-    private final IntakeArm intakeArm = IntakeArm.getInstance();
     private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Vision vision = Vision.getInstance();
@@ -86,17 +85,7 @@ public class RobotContainer {
 //        );
 //        xboxController.povUp().whileTrue(hood.angleCommand(1));
 //        xboxController.povDown().whileTrue(hood.angleCommand(.4));
-//        xboxController.povUp().whileTrue(intakeArm.intakeUp());
-//        xboxController.povDown().whileTrue(intakeArm.intakeDown());
 //        xboxController.povRight().whileTrue(intakeRollers.intakeIn());
-//
-//        xboxController.x().whileTrue(
-//                intakeArm.getQuasistatic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(1))
-//                        .andThen(intakeArm.getQuasistatic(SysIdRoutine.Direction.kReverse)).andThen(new WaitCommand(1))
-//                        .andThen(intakeArm.getDynamic(SysIdRoutine.Direction.kForward)).andThen(new WaitCommand(1))
-//                        .andThen(intakeArm.getDynamic(SysIdRoutine.Direction.kReverse))
-//        );
-//
 //        xboxController.y().whileTrue(
 //                swerve.sysIdAngleMotorCommand()
 //        );

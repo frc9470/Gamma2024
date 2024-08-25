@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.*;
 public class Superstructure extends SubsystemBase {
     private static Superstructure instance;
     private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
-    private final IntakeArm intakeArm = IntakeArm.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Swerve swerve = Swerve.getInstance();
     private final Hood hood = Hood.getInstance();
@@ -96,18 +95,14 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command intakeNote(){
-        return intakeArm.intakeDown().andThen(intakeArm.waitReady())
+        return  intakeRollers.intakeIn()
+                    .alongWith(indexer.beltForward()).until(indexer::hasNote)
                 .andThen(
-                        intakeRollers.intakeIn()
-                                .alongWith(indexer.beltForward()).until(indexer::hasNote)
-                )
-                .andThen(
-                        indexer.beltStop().alongWith(intakeArm.intakeUp()).alongWith(intakeRollers.intakeStop())
+                        indexer.beltStop().alongWith(intakeRollers.intakeStop())
                 )
                 .handleInterrupt(() -> {
                     indexer.setVoltage(0);
                     intakeRollers.setVoltage(0);
-                    intakeArm.setGoal(Consts.IntakeConstants.UP_GOAL);
                 });
     }
 

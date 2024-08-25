@@ -41,18 +41,6 @@ public class Consts {
         public static final int INTAKE_ROLLER_ID = 15;
         public static final boolean IS_TUNING = false;
         public static final TunableNumber INTAKE_TAKE_IN_VOLTAGE = new TunableNumber("Intake/Roller_Voltage", 6.0, IS_TUNING);
-
-        public static final ArmConfiguration INTAKE_ARM = new ArmConfiguration(
-                "IntakeArm",
-                14,  // motorId
-                0,   // encoderPort
-                0.7, // ffG
-                0.792, // absoluteOffset
-                18.0 / 30.0, // encoderRatio
-                5); // PID_P
-
-        public static final double UP_GOAL = 1.9;
-        public static final double DOWN_GOAL = -.18;
     }
 
     public static class HoodConstants{
