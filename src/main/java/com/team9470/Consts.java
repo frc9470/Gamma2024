@@ -49,14 +49,14 @@ public class Consts {
                 0.7, // ffG
                 0.792, // absoluteOffset
                 18.0 / 30.0, // encoderRatio
-                5); // PID_$
+                5); // PID_P
 
         public static final double UP_GOAL = 1.9;
         public static final double DOWN_GOAL = -.18;
     }
 
     public static class HoodConstants{
-        public static final double TOLERANCE = 0.05;
+        public static final double TOLERANCE = 0.01;
 
         public static final boolean IS_TUNING = false;
         public static final ArmConfiguration HOOD = new ArmConfiguration(

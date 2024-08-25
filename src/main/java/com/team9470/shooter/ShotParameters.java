@@ -23,7 +23,7 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
     private static final boolean tuning = true;
 
     private static final TunableNumber rpmTune = new TunableNumber("Shooter/rpm", 0.0, tuning);
-    private static final TunableNumber angleTune = new TunableNumber("Shooter/angle", 0.0, tuning);
+    private static final TunableNumber angleTune = new TunableNumber("Shooter/angle", 0.55, tuning);
     private static final TunableNumber yawTune = new TunableNumber("Shooter/yaw", 0.0, tuning);
 
     /**
