@@ -6,6 +6,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +21,7 @@ public class Ampevator extends SubsystemBase {
     private final CANSparkMax elevator2 = new CANSparkMax(AmpevatorConstants.ID_2, CANSparkLowLevel.MotorType.kBrushless);
     private final CANSparkMax rollers = new CANSparkMax(AmpevatorConstants.ROLLER_ID, CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder encoder = elevator1.getEncoder();
+    private final DigitalInput beamBreak = new DigitalInput(AmpevatorConstants.BEAM_BREAK_PORT);
 
     private final ElevatorFeedforward feedforward = new ElevatorFeedforward(AmpevatorConstants.KS, AmpevatorConstants.KG, AmpevatorConstants.KV, AmpevatorConstants.KA);
     private final ProfiledPIDController controller =
@@ -77,6 +79,10 @@ public class Ampevator extends SubsystemBase {
 
     private double getPosition() {
         return encoder.getPosition();
+    }
+
+    private boolean getBeamBreak() {
+        return beamBreak.get();
     }
 
     public Command toTarget(double target) {

@@ -103,6 +103,8 @@ public class Consts {
 
         public static final double TOLERANCE = 0.01;
 
+        public static final int BEAM_BREAK_PORT = 3;
+
         // targets
         public static final double AMP = Units.inchesToMeters(16);
         public static final double TRAP = Units.inchesToMeters(18.5);
