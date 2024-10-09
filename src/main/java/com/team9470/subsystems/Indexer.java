@@ -12,7 +12,7 @@ import static com.team9470.Consts.IndexerConstants.*;
 
 public class Indexer extends SubsystemBase {
     private static Indexer instance;
-    public final CANSparkMax index1 = new CANSparkMax(INDEX_ID_1, CANSparkMax.MotorType.kBrushless);
+    public final CANSparkMax index1 = new CANSparkMax(INDEX_ID, CANSparkMax.MotorType.kBrushless);
     public final DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
     private Indexer(){
         //settings

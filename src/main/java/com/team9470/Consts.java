@@ -10,8 +10,7 @@ import edu.wpi.first.math.util.Units;
 
 public class Consts {
     public static class IndexerConstants{
-        public static final int INDEX_ID_1 = 19;
-        public static final int INDEX_ID_2 = 20;
+        public static final int INDEX_ID = 19;
         public static final int BEAM_BREAK_ID = 2;
         public static final double BELT_FORWARD_VOLTAGE = 6;
         public static final double BELT_MAX_FORWARD_VOLTAGE = 12;
@@ -38,7 +37,7 @@ public class Consts {
     }
 
     public static class IntakeConstants{
-        public static final int INTAKE_ROLLER_ID = 15;
+        public static final int INTAKE_ROLLER_ID = 20;
         public static final boolean IS_TUNING = false;
         public static final TunableNumber INTAKE_TAKE_IN_VOLTAGE = new TunableNumber("Intake/Roller_Voltage", 6.0, IS_TUNING);
     }
@@ -77,6 +76,36 @@ public class Consts {
         public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(9.611, 0,0, new Rotation3d(0, 0, 0));
 
 
+    }
+
+    public static class AmpevatorConstants {
+        public static final int ID_1 = 14;
+        public static final int ID_2 = 15;
+        public static final boolean INVERTED = false;
+        public static final int ROLLER_ID = 16;
+
+        public static final double KP = .1;
+        public static final double KI = 0.0;
+        public static final double KD = 0.0;
+
+        public static final double VELOCITY_LIMIT = .1; //(m/s)
+        public static final double ACCELERATION_LIMIT = .3; //(m/s)
+
+        public static final double KS = 0.0;
+        public static final double KG = 0.26;
+        public static final double KV = 7.01; // v/(m/s)
+        public static final double KA = 0.03; // v/(m/s^2)
+
+
+        public static final double RATIO_MPR = Units.inchesToMeters(9/72.0 * 22.0*.25);
+        public static final double EXTENSION_HEIGHT = Units.inchesToMeters(24.0);
+        public static final double HOMING_SPEED = -0.5;
+
+        public static final double TOLERANCE = 0.01;
+
+        // targets
+        public static final double AMP = Units.inchesToMeters(16);
+        public static final double TRAP = Units.inchesToMeters(18.5);
     }
 
 }
