@@ -108,6 +108,7 @@ public class Consts {
         // targets
         public static final double AMP = Units.inchesToMeters(16);
         public static final double TRAP = Units.inchesToMeters(18.5);
+        public static final double ROLLER_SPEED = 12;
     }
 
 }

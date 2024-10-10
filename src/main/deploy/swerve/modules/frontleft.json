@@ -1,9 +1,9 @@
-{ // from backright
+{
   "location": {
-    "front": -9.875,
-    "left": -9.875
+    "front": 9.875,
+    "left": 9.875
   },
-  "absoluteEncoderOffset": 156.269,
+  "absoluteEncoderOffset": 336.269,
   "drive": {
     "type": "sparkmax",
     "id": 9,
