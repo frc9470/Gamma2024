@@ -15,6 +15,7 @@ public class Superstructure extends SubsystemBase {
     private final Swerve swerve = Swerve.getInstance();
     private final Hood hood = Hood.getInstance();
     private final Shooter shooter = Shooter.getInstance();
+    private final Ampevator ampevator = Ampevator.getInstance();
 
     public static final boolean SHOOT_ON_MOVE = false;
     public static final double STEADY_RPM = 120.0;
@@ -101,7 +102,7 @@ public class Superstructure extends SubsystemBase {
                         indexer.beltStop().alongWith(intakeRollers.intakeStop())
                 )
                 .handleInterrupt(() -> {
-                    indexer.setVoltage(0);
+                    indexer.setBottom(0);
                     intakeRollers.setVoltage(0);
                 });
     }
@@ -116,7 +117,7 @@ public class Superstructure extends SubsystemBase {
                     // wait for heading to update
 //                    swerve.aimAtYaw(() -> parameters.heading())
                 ),
-                indexer.beltForward().until(() -> !indexer.hasNote()),
+                indexer.beltThrough().until(() -> !indexer.hasNote()),
                 new WaitCommand(0.3),
                 indexer.beltStop()
         );
@@ -136,7 +137,7 @@ public class Superstructure extends SubsystemBase {
                 ),
                 new WaitCommand(1).deadlineWith(indexer.beltMaxForward()),
                 new InstantCommand(() -> shotType = defaultType)
-        ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0);});
     }
 
     public Command autonShot(){
@@ -163,7 +164,7 @@ public class Superstructure extends SubsystemBase {
                         hood.waitReady()
                 ),
                 indexer.beltMaxForward()
-        ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0);});
     }
 
     public Command feedShot(){
@@ -178,14 +179,19 @@ public class Superstructure extends SubsystemBase {
                         swerve.aimAtFeed()
                 ),
                 indexer.beltMaxForward()
-        ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0);});
     }
 
     public Command reverse(){
         return new SequentialCommandGroup(
                 new InstantCommand(() -> shotType = ShotType.REVERSE),
                 indexer.beltBackward()
-        ).handleInterrupt(() -> {shotType = defaultType; indexer.setVoltage(0);});
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0);});
+    }
+
+    public Command intakeAmp(){
+        return indexer.ampForward()
+                .alongWith(ampevator.rollerOut()).until(ampevator::hasNote)
     }
 
     public enum ShotType {

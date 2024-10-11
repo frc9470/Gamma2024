@@ -13,12 +13,11 @@ import edu.wpi.first.wpilibj2.command.*;
 import static com.team9470.Consts.AmpevatorConstants;
 import static com.team9470.Util.clamp;
 
-public class Ampevator extends SubsystemBase {
+public class Climber extends SubsystemBase {
 
-    private static Ampevator instance;
+    private static Climber instance;
     private final CANSparkMax elevator1 = new CANSparkMax(AmpevatorConstants.ID_1, CANSparkLowLevel.MotorType.kBrushless);
     private final CANSparkMax elevator2 = new CANSparkMax(AmpevatorConstants.ID_2, CANSparkLowLevel.MotorType.kBrushless);
-    private final CANSparkMax rollers = new CANSparkMax(AmpevatorConstants.ROLLER_ID, CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder encoder = elevator1.getEncoder();
     private final DigitalInput beamBreak = new DigitalInput(AmpevatorConstants.BEAM_BREAK_PORT);
 
@@ -29,7 +28,7 @@ public class Ampevator extends SubsystemBase {
     private boolean needsHome = true;
     private double goal;
 
-    private Ampevator(){
+    private Climber(){
         elevator1.restoreFactoryDefaults();
         elevator2.restoreFactoryDefaults();
         elevator1.setInverted(AmpevatorConstants.INVERTED);
@@ -40,9 +39,9 @@ public class Ampevator extends SubsystemBase {
         encoder.setPositionConversionFactor(AmpevatorConstants.RATIO_MPR);
     }
 
-    public static Ampevator getInstance(){
+    public static Climber getInstance(){
         if(instance == null){
-            instance = new Ampevator();
+            instance = new Climber();
         }
         return instance;
     }
@@ -78,65 +77,6 @@ public class Ampevator extends SubsystemBase {
 
     public double getPosition() {
         return encoder.getPosition();
-    }
-
-    public boolean hasNote() {
-        return !beamBreak.get();
-    }
-
-
-    /**
-     * Command to instantly set the target position of the elevator without waiting for it to reach the target
-     * @param target The target position in meters
-     * @return
-     */
-    public Command setTarget(double target){
-        return new InstantCommand(() -> goal = target);
-    }
-
-    /**
-     * Command to set the target position of the elevator and wait for it to reach the target
-     * @param target The target position in meters
-     * @return
-     */
-    public Command toTarget(double target) {
-        return new Command() {
-            @Override
-            public void initialize() {
-                goal = clamp(target, 0, AmpevatorConstants.EXTENSION_HEIGHT);
-            }
-
-            @Override
-            public boolean isFinished() {
-                return Math.abs(encoder.getPosition()-goal) < AmpevatorConstants.TOLERANCE;
-            }
-        };
-    }
-
-    public Command ampNote() {
-        return new SequentialCommandGroup(
-                    toTarget(AmpevatorConstants.AMP),
-                    rollerOut().until(this::hasNote)
-                        .andThen(rollerOut()
-                            .deadlineWith(
-                                    new WaitCommand(1)
-                                            .andThen(toTarget(0))
-                            )
-                        ),
-                    toTarget(0)
-                );
-    }
-
-    public Command rollerOut() {
-        return this.runEnd(() -> rollers.setVoltage(AmpevatorConstants.ROLLER_SPEED), rollers::stopMotor);
-    }
-
-    public Command rollerStop() {
-        return new InstantCommand(rollers::stopMotor);
-    }
-
-    public Command home(){
-        return new InstantCommand(() -> needsHome = true);
     }
 
 }

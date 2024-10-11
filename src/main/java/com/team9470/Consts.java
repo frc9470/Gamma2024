@@ -10,9 +10,10 @@ import edu.wpi.first.math.util.Units;
 
 public class Consts {
     public static class IndexerConstants{
-        public static final int INDEX_ID = 19;
+        public static final int BOTTOM_ROLLER_ID = 19;
+        public static final int TOP_ROLLER_ID = 20;
         public static final int BEAM_BREAK_ID = 2;
-        public static final double BELT_FORWARD_VOLTAGE = 6;
+        public static final double FORWARD_VOLTAGE = 6;
         public static final double BELT_MAX_FORWARD_VOLTAGE = 12;
         public static final double BELT_BACKWARD_VOLTAGE = -6;
 
@@ -37,7 +38,7 @@ public class Consts {
     }
 
     public static class IntakeConstants{
-        public static final int INTAKE_ROLLER_ID = 20;
+        public static final int INTAKE_ROLLER_ID = 21;
         public static final boolean IS_TUNING = false;
         public static final TunableNumber INTAKE_TAKE_IN_VOLTAGE = new TunableNumber("Intake/Roller_Voltage", 6.0, IS_TUNING);
     }
@@ -98,17 +99,17 @@ public class Consts {
 
 
         public static final double RATIO_MPR = Units.inchesToMeters(9/72.0 * 22.0*.25);
-        public static final double EXTENSION_HEIGHT = Units.inchesToMeters(24.0);
+        public static final double EXTENSION_HEIGHT = Units.inchesToMeters(18.7);
         public static final double HOMING_SPEED = -0.5;
 
-        public static final double TOLERANCE = 0.01;
+        public static final double TOLERANCE = 0.01; // 1cm
 
         public static final int BEAM_BREAK_PORT = 3;
 
         // targets
         public static final double AMP = Units.inchesToMeters(16);
         public static final double TRAP = Units.inchesToMeters(18.5);
-        public static final double ROLLER_SPEED = 12;
+        public static final double ROLLER_SPEED = 12.0; // volts
     }
 
 }
