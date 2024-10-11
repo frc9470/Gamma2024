@@ -112,6 +112,14 @@ public class Consts {
         public static final double ROLLER_SPEED = 12.0; // volts
     }
 
-    public
+    public static class ClimberConstants {
+        public static final int ID_1 = 14;
+        public static final int ID_2 = 15;
+        public static final boolean INVERSE = true;
+
+        public static final double RELEASE_VOLTAGE = -12.0;
+        public static final double CLIMB_VOLTAGE = 12.0;
+
+    }
 
 }
