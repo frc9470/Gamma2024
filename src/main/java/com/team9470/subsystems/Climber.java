@@ -6,8 +6,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.team9470.Consts.ClimberConstants;
-import static com.team9470.Util.clamp;
 
+/**
+ * todo: incorporate encoder feedback and current sensing for homing?
+ * not sure if this is necessary
+ */
 public class Climber extends SubsystemBase {
 
     private static Climber instance;
@@ -42,7 +45,7 @@ public class Climber extends SubsystemBase {
     }
 
     public Command prepareClimb(){
-        return this.runEnd(() -> setVoltage(-ClimberConstants.CLIMB_VOLTAGE), () -> setVoltage(0.0));
+        return this.runEnd(() -> setVoltage(ClimberConstants.RELEASE_VOLTAGE), () -> setVoltage(0.0));
     }
 
     public Command climb(){

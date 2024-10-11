@@ -55,9 +55,9 @@ public class RobotContainer {
         );
 
         xboxController.leftBumper().whileTrue(superstructure.intakeNote());
-        xboxController.rightBumper().whileTrue(superstructure.feedShot());
+        xboxController.rightBumper().whileTrue(superstructure.intakeAmp());
         xboxController.rightTrigger().whileTrue(superstructure.staticShot(Superstructure.ShotType.SUBWOOFER));
-        xboxController.leftTrigger().whileTrue(superstructure.ampShot());
+        xboxController.leftTrigger().whileTrue(superstructure.ampNote());
 
         xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
         xboxController.povLeft().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM_SIDE));
@@ -68,7 +68,7 @@ public class RobotContainer {
 
         xboxController.x().whileTrue(superstructure.reverse());
         xboxController.y().whileTrue(indexer.beltForward());
-        xboxController.b().whileTrue(intakeRollers.intakeOut());
+        xboxController.b().whileTrue(superstructure.climb());
 
 
 //        xboxController.x().whileTrue(

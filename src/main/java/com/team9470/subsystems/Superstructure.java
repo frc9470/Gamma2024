@@ -16,6 +16,7 @@ public class Superstructure extends SubsystemBase {
     private final Hood hood = Hood.getInstance();
     private final Shooter shooter = Shooter.getInstance();
     private final Ampevator ampevator = Ampevator.getInstance();
+    private final Climber climber = Climber.getInstance();
 
     public static final boolean SHOOT_ON_MOVE = false;
     public static final double STEADY_RPM = 120.0;
@@ -75,14 +76,18 @@ public class Superstructure extends SubsystemBase {
                 hood.setGoal(Consts.HoodConstants.AMP_POS);
                 return;
             }
-            case FEED -> {
+            case FEED -> { // update to use actual regression maps
                 shooter.setVelocity(5400);
                 hood.setGoal(1.2);
                 return;
             }
-            case REVERSE -> {
+            case REVERSE -> { // broken
                 shooter.setVelocity(-3000);
                 hood.setGoal(0.7);
+            }
+            case CLIMBING -> {
+                shooter.setVelocity(0);
+                hood.setGoal(1.5);
             }
         }
 
@@ -154,18 +159,6 @@ public class Superstructure extends SubsystemBase {
         );
     }
 
-    public Command ampShot(){
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> shotType = ShotType.AMP),
-                new ParallelCommandGroup(
-                        // wait for shooter to spin up
-                        shooter.waitReady(),
-                        // wait for hood to get to correct angle
-                        hood.waitReady()
-                ),
-                indexer.beltMaxForward()
-        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0);});
-    }
 
     public Command feedShot(){
         return new SequentialCommandGroup(
@@ -190,11 +183,58 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command intakeAmp(){
-        return indexer.ampForward()
-                .alongWith(ampevator.rollerOut()).until(ampevator::hasNote)
+        return indexer.beltForward()
+                .alongWith(ampevator.rollerOut())
+                .until(ampevator::hasNote);
     }
 
+    public Command ampNote(){
+        return ampevator.ampNote();
+    }
+
+    /**
+     * command that has the following sequence
+     * - pivot shooter all the way up
+     * - set shooter to 0 rpm
+     * - climber up
+     * - ampevator up
+     * @return
+     */
+    public Command prepareClimb() {
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> shotType = ShotType.CLIMBING),
+                new InstantCommand(() -> climbState = ClimbState.CLIMB),
+                ampevator.setTarget(Consts.AmpevatorConstants.EXTENSION_HEIGHT),
+                climber.prepareClimb()
+        );
+    }
+
+    public Command doClimb(){
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> climbState = ClimbState.TRAP),
+                climber.climb()
+        );
+    }
+
+    public enum ClimbState {
+        PREPARE, CLIMB, TRAP
+    }
+    private ClimbState climbState = ClimbState.PREPARE;
+
+    public Command climb(){
+        return new ConditionalCommand(
+                prepareClimb(),
+                new ConditionalCommand(
+                        doClimb(),
+                        ampevator.rollerOut(),
+                        () -> climbState == ClimbState.CLIMB
+                ),
+                () -> climbState == ClimbState.PREPARE
+        );
+    }
+
+
     public enum ShotType {
-        AUTO, SUBWOOFER, STEADY, PODIUM, PODIUM_SIDE, AMP, FEED, REVERSE
+        AUTO, SUBWOOFER, STEADY, PODIUM, PODIUM_SIDE, AMP, FEED, REVERSE, CLIMBING
     }
 }
