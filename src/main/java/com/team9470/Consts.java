@@ -112,4 +112,11 @@ public class Consts {
         public static final double ROLLER_SPEED = 12.0; // volts
     }
 
+    public static class ClimberConstants {
+        public static final int ID_1 = 14;
+        public static final int ID_2 = 15;
+
+
+    }
+
 }
