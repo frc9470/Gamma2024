@@ -20,7 +20,7 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
 
     private static final Pose2d SPEAKER_CENTER = FieldLayout.kSpeakerCenter;
     private static final double TO_F_FACTOR = 0.2;
-    private static final boolean tuning = true;
+    private static final boolean tuning = false;
 
     private static final TunableNumber rpmTune = new TunableNumber("Shooter/rpm", 0.0, tuning);
     private static final TunableNumber angleTune = new TunableNumber("Shooter/angle", 0.55, tuning);
@@ -41,6 +41,7 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
 
         double yaw = targetRelative.getAngle().getDegrees();
         double distance = targetRelative.getNorm();
+        SmartDashboard.putNumber("FiringParams/Uncomped Dist", distance);
         double range;
 
         if (tuning) return new ShotParameters(distance, rpmTune.get(), angleTune.get(), new Rotation2d(yawTune.get()));
@@ -55,7 +56,7 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
         }
 
         double rpm = getShooterSpeed(range);
-        double angle = getShooterAngle(range);
+        double angle = getShooterAngle(range)*Math.PI / 180.0;
         double heading = yaw + getShooterYaw(range);
 
         return new ShotParameters(distance, rpm, angle, new Rotation2d(heading));

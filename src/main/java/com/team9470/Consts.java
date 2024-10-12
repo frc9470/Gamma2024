@@ -10,8 +10,8 @@ import edu.wpi.first.math.util.Units;
 
 public class Consts {
     public static class IndexerConstants{
-        public static final int BOTTOM_ROLLER_ID = 19;
-        public static final int TOP_ROLLER_ID = 20;
+        public static final int BOTTOM_ROLLER_ID = 14;
+        public static final int TOP_ROLLER_ID = 15;
         public static final int BEAM_BREAK_ID = 2;
         public static final double FORWARD_VOLTAGE = 6;
         public static final double BELT_MAX_FORWARD_VOLTAGE = 12;
@@ -38,7 +38,7 @@ public class Consts {
     }
 
     public static class IntakeConstants{
-        public static final int INTAKE_ROLLER_ID = 21;
+        public static final int INTAKE_ROLLER_ID = 22;
         public static final boolean IS_TUNING = false;
         public static final TunableNumber INTAKE_TAKE_IN_VOLTAGE = new TunableNumber("Intake/Roller_Voltage", 6.0, IS_TUNING);
     }
@@ -80,10 +80,10 @@ public class Consts {
     }
 
     public static class AmpevatorConstants {
-        public static final int ID_1 = 14;
-        public static final int ID_2 = 15;
+        public static final int ID_1 = 20;
+        public static final int ID_2 = 21;
         public static final boolean INVERTED = false;
-        public static final int ROLLER_ID = 16;
+        public static final int ROLLER_ID = 19;
 
         public static final double KP = .1;
         public static final double KI = 0.0;
@@ -113,8 +113,8 @@ public class Consts {
     }
 
     public static class ClimberConstants {
-        public static final int ID_1 = 14;
-        public static final int ID_2 = 15;
+        public static final int ID_1 = 23;
+        public static final int ID_2 = 24;
         public static final boolean INVERTED = true;
 
         public static final double RELEASE_VOLTAGE = -12.0;

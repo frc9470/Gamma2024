@@ -125,10 +125,12 @@ public class Swerve extends SubsystemBase {
                     setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0,
                             0,
                             controller.headingCalculate(getHeading().getRadians(),
-                                    yawToTarget().getRadians()),
+                                    yaw.get().getRadians()),
                             getHeading())
                     );
                     SmartDashboard.putNumber("AimAtYaw/HeadingError", yaw.get().getDegrees() - getHeading().getDegrees());
+                    SmartDashboard.putNumber("AimAtYaw/TargetYaw", yaw.get().getDegrees());
+                    SmartDashboard.putNumber("AimAtYaw/CurrentYaw", -getHeading().getDegrees());
                 }).until(() -> yaw.get().getDegrees() - getHeading().getDegrees() < SwerveConstants.TOLERANCE);
     }
 

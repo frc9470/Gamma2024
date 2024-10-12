@@ -60,13 +60,10 @@ public class RobotContainer {
         xboxController.leftTrigger().whileTrue(superstructure.ampNote());
 
         xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
-        xboxController.povLeft().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM_SIDE));
-        xboxController.povRight().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM_SIDE));
-        xboxController.povDown().whileTrue(superstructure.staticShot(Superstructure.ShotType.AUTO));
 
         xboxController.a().onTrue(new InstantCommand(swerve::zeroGyroWithAlliance));
 
-        xboxController.x().whileTrue(superstructure.reverse());
+        xboxController.x().whileTrue(superstructure.shootNote());
         xboxController.y().whileTrue(indexer.beltForward());
         xboxController.b().whileTrue(superstructure.climb());
 

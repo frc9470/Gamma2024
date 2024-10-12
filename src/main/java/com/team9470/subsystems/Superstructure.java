@@ -22,7 +22,7 @@ public class Superstructure extends SubsystemBase {
     public static final double STEADY_RPM = 120.0;
     public ShotParameters parameters = null;
 
-    public ShotType defaultType = ShotType.STEADY;
+    public ShotType defaultType = ShotType.AUTO;
     public ShotType shotType = defaultType;
 
     public static Superstructure getInstance(){
@@ -38,6 +38,8 @@ public class Superstructure extends SubsystemBase {
         SmartDashboard.putString("FiringParams/ShotType", shotType.name());
     }
 
+    private int count = 0;
+
     private void updateShooter(){
         Pose2d pose = swerve.getPose();
         ChassisSpeeds speeds = swerve.getRobotVelocity();
@@ -50,15 +52,21 @@ public class Superstructure extends SubsystemBase {
                             Swerve.isRedAlliance(),
                             SHOOT_ON_MOVE
                     );
+
                 } catch (NullPointerException e) {
                     System.err.println("Error while generating shooter parameters, likely caused by lack of data: " + e.getMessage());
                 }
 
-//                if (parameters == null || parameters.distance() > 10.4){
-//                    hood.setGoal(1);
-//                    shooter.setVelocity(STEADY_RPM);
-//                    return;
-//                }
+                if (parameters == null || parameters.distance() > 10.4){
+                    hood.setGoal(1);
+                    shooter.setVelocity(STEADY_RPM);
+                    return;
+                }
+
+                if(count%20 == 0){
+                    System.out.println(parameters);
+                }
+                count++;
             }
             case STEADY -> {
                 hood.setGoal(1);
@@ -114,13 +122,14 @@ public class Superstructure extends SubsystemBase {
 
     public Command shootNote(){
         return new SequentialCommandGroup(
+                new InstantCommand(() -> System.out.println("Shooting!")),
                 new ParallelCommandGroup(
                     // wait for shooter to spin up
                     shooter.waitReady(),
                     // wait for hood to get to correct angle
-                    hood.waitReady()
+                    hood.waitReady(),
                     // wait for heading to update
-//                    swerve.aimAtYaw(() -> parameters.heading())
+                    swerve.aimAtYaw(parameters::heading).onlyIf(() -> parameters != null)
                 ),
                 indexer.beltThrough().until(() -> !indexer.hasNote()),
                 new WaitCommand(0.3),
