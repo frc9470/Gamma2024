@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.photonvision.PhotonUtils;
@@ -130,8 +131,15 @@ public class Swerve extends SubsystemBase {
                     );
                     SmartDashboard.putNumber("AimAtYaw/HeadingError", yaw.get().getDegrees() - getHeading().getDegrees());
                     SmartDashboard.putNumber("AimAtYaw/TargetYaw", yaw.get().getDegrees());
-                    SmartDashboard.putNumber("AimAtYaw/CurrentYaw", -getHeading().getDegrees());
-                }).until(() -> yaw.get().getDegrees() - getHeading().getDegrees() < SwerveConstants.TOLERANCE);
+                    SmartDashboard.putNumber("AimAtYaw/CurrentYaw", getHeading().getDegrees());
+                }).until(() -> Math.abs(yaw.get().getDegrees() - getHeading().getDegrees()) < SwerveConstants.TOLERANCE)
+                .andThen(new InstantCommand(() -> {
+                    setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0,
+                            0,
+                            0,
+                            getHeading())
+                    );
+                }));
     }
 
     public Command aimAtFeed() {

@@ -3,6 +3,7 @@ package com.team9470.subsystems;
 import com.team9470.Consts;
 import com.team9470.shooter.ShotParameters;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -129,7 +130,7 @@ public class Superstructure extends SubsystemBase {
                     // wait for hood to get to correct angle
                     hood.waitReady(),
                     // wait for heading to update
-                    swerve.aimAtYaw(parameters::heading).onlyIf(() -> parameters != null)
+                    swerve.aimAtYaw(() -> parameters != null ? parameters.heading() : new Rotation2d()).onlyIf(() -> parameters != null)
                 ),
                 indexer.beltThrough().until(() -> !indexer.hasNote()),
                 new WaitCommand(0.3),

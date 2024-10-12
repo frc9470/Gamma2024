@@ -46,7 +46,6 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
 
         if (tuning) return new ShotParameters(distance, rpmTune.get(), angleTune.get(), new Rotation2d(yawTune.get()));
 
-
         if (shootOnMove) {
             double[] adjustedParams = adjustForMovement(yaw, distance, velocity);
             yaw = adjustedParams[0];
@@ -58,8 +57,10 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
         double rpm = getShooterSpeed(range);
         double angle = getShooterAngle(range)*Math.PI / 180.0;
         double heading = yaw + getShooterYaw(range);
+//        System.out.println(yaw);
+//        System.out.println(getShooterYaw(range));
 
-        return new ShotParameters(distance, rpm, angle, new Rotation2d(heading));
+        return new ShotParameters(distance, rpm, angle, Rotation2d.fromDegrees(heading));
     }
 
     public static ShotParameters simple(double distance, double yaw, boolean isRedAlliance){
