@@ -30,7 +30,7 @@ public class IntakeRollers extends SubsystemBase {
     }
 
     public Command intakeIn(){
-        return this.runEnd(() -> setVoltage(INTAKE_TAKE_IN_VOLTAGE.get()), () -> setVoltage(0f));
+        return this.runEnd(() -> setVoltage(INTAKE_TAKE_IN_VOLTAGE), () -> setVoltage(0f));
     }
 
     public Command intakeStop (){
@@ -38,6 +38,6 @@ public class IntakeRollers extends SubsystemBase {
     }
 
     public Command intakeOut(){
-        return this.runEnd(() -> setVoltage(-INTAKE_TAKE_IN_VOLTAGE.get()), () -> setVoltage(0f));
+        return this.runEnd(() -> setVoltage(-INTAKE_TAKE_IN_VOLTAGE), () -> setVoltage(0f));
     }
 }
