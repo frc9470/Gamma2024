@@ -15,10 +15,18 @@ import static com.team9470.Consts.ShooterConstants.*;
 import static edu.wpi.first.units.Units.Volts;
 
 /**
- * Shooter
+ * shoots the note [into the speaker]
+ * <br><br>
+ * contains:
  * <ul>
- * <li>command to rpm</li>
+ * <li>command to approach rpm</li>
  * <li>conditional wait until rpm</li>
+ * </ul>
+ * <br>
+ * <b>IMPORTANT NOTES:</b>
+ * <ul>
+ * <li> SHOOTER IS ALWAYS SPINNING;
+ *      THIS WILL OCCUR THE MOMENT THE ROBOT IS ENABLED </li>
  * </ul>
  */
 public class Shooter extends SubsystemBase {

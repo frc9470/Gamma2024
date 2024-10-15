@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.team9470.Consts.IntakeConstants.*;
 
+/**
+ * Gets notes from the floor into the intake ecosystem
+ */
 public class IntakeRollers extends SubsystemBase {
     private static IntakeRollers instance;
     public final CANSparkMax intakeRollerMotor = new CANSparkMax(INTAKE_ROLLER_ID, CANSparkMax.MotorType.kBrushless);

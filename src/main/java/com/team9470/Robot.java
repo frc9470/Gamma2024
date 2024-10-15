@@ -12,7 +12,7 @@ import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot
 {
-    private Command autonomousCommand;
+    private Command currAuton;
     
     private RobotContainer robotContainer;
     boolean enabled = false;
@@ -51,11 +51,13 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
-        autonomousCommand = robotContainer.getAutonomousCommand();
+        currAuton = robotContainer.getAutonomousCommand();
 
-        if (autonomousCommand != null)
+        // basically if the auton selector has not selected anything,
+        // this won't run!
+        if (currAuton != null)
         {
-            autonomousCommand.schedule();
+            currAuton.schedule();
         }
     }
     
@@ -71,9 +73,9 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
-        if (autonomousCommand != null)
+        if (currAuton != null)
         {
-            autonomousCommand.cancel();
+            currAuton.cancel();
         }
     }
     

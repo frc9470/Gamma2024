@@ -38,6 +38,10 @@ import static com.team9470.Consts.AutonConstants;
 import static com.team9470.Consts.SwerveConstants;
 import static org.photonvision.PhotonUtils.getYawToPose;
 
+/**
+ * extension of YAGSL's "SwerveDrive" class, with specific
+ * functionality implemented for our robot
+ */
 public class Swerve extends SubsystemBase {
     private static Swerve instance;
     private final SwerveDrive swerveDrive;

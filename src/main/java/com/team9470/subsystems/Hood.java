@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import static com.team9470.Consts.HoodConstants.HOOD;
 import static com.team9470.Consts.HoodConstants.TOLERANCE;
 
+/**
+ * controls vertical orientation of shooter
+ */
 public class Hood extends AbstractArm {
 
     private static Hood instance;

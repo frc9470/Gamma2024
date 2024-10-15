@@ -9,25 +9,61 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 
+/**
+ * OVERALL intake superstructure (for OVERALL control)
+ * <br><br>
+ * <b>IMPORTANT NOTES:</b><br>
+ * - SHOOTER IS ALWAYS SPINNING; THIS WILL OCCUR THE MOMENT THE ROBOT IS ENABLED
+ */
 public class Superstructure extends SubsystemBase {
+    // initializes singleton of the class
     private static Superstructure instance;
+
+
+    // SUBSYSTEMS
+
     private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
     private final Indexer indexer = Indexer.getInstance();
     private final Swerve swerve = Swerve.getInstance();
     private final Hood hood = Hood.getInstance();
     private final Shooter shooter = Shooter.getInstance();
+
+    // TODO: NOT USING FOR NOW
     private final Ampevator ampevator = Ampevator.getInstance();
     private final Climber climber = Climber.getInstance();
 
-    public static final boolean SHOOT_ON_MOVE = false;
-    public static final double STEADY_RPM = 120.0;
+
+    // ADDITIONAL CONTROLLERS
+
     public ShotParameters parameters = null;
+
+
+    // CONSTANTS
+
+    /**
+     * it will compensate for robot's movement WHILE shooting
+     * <br>
+     * <b>TODO:</b> based off of citrus circuits' code; see if it works!
+     */
+    public static final boolean SHOOT_ON_MOVE = false;
+    /**
+     * the rpm that the shooter will spin at when
+     * the shooter <i>isn't being used for anything</i>
+     */
+    public static final double STEADY_RPM = 120.0;
+
+
+    // RUNTIME VARIABLES
 
     public ShotType defaultType = ShotType.AUTO;
     public ShotType shotType = defaultType;
 
+    // RUNTIME VARIABLES
+
+    private int count = 0;
+
     public static Superstructure getInstance(){
-        if(instance == null){
+        if (instance == null) {
             instance = new Superstructure();
         }
         return instance;
@@ -38,8 +74,6 @@ public class Superstructure extends SubsystemBase {
         updateShooter();
         SmartDashboard.putString("FiringParams/ShotType", shotType.name());
     }
-
-    private int count = 0;
 
     private void updateShooter(){
         Pose2d pose = swerve.getPose();

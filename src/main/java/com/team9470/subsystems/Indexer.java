@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.team9470.Consts.IndexerConstants.*;
 
+/**
+ * Responsible for transferring note to either the shooter or ampevator
+ */
 public class Indexer extends SubsystemBase {
     private static Indexer instance;
     public final CANSparkMax bottomRollers = new CANSparkMax(BOTTOM_ROLLER_ID, CANSparkMax.MotorType.kBrushless);

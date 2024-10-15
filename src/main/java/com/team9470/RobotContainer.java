@@ -17,18 +17,41 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
 public class RobotContainer {
+    // wpilib class; we just ask the xbox controller what buttons are being pressed
+    // and they let us know!
     private final CommandXboxController xboxController = new CommandXboxController(0);
 
+
+
+    // // SUBSYSTEMS
+
     private final Swerve swerve = Swerve.getInstance();
-    private final Hood hood = Hood.getInstance();
-    private final Shooter shooter = Shooter.getInstance();
-    private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
-    private final Indexer indexer = Indexer.getInstance();
-    private final Vision vision = Vision.getInstance();
+
+
+    // INTAKE ECOSYSTEM
 
     private final Superstructure superstructure = new Superstructure();
 
+    private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
+
+    private final Indexer indexer = Indexer.getInstance();
+
+    private final Shooter shooter = Shooter.getInstance();
+    private final Hood hood = Hood.getInstance();
+
+
+
+    // SENSORS
+
+    private final Vision vision = Vision.getInstance();
+
+
+    // ADDITIONAL CONTROLLERS
+
     private final SendableChooser<Command> autoChooser;
+
+
+
     public RobotContainer()
     {
         initPathplanner();
@@ -37,12 +60,21 @@ public class RobotContainer {
         SmartDashboard.putData("AutoChooser", autoChooser);
     }
 
+    /**
+     * adds functions that can be called during our autons / paths
+     */
     private void initPathplanner() {
         NamedCommands.registerCommand("intake", superstructure.intakeNote());
         NamedCommands.registerCommand("shoot", superstructure.autonShot());
     }
 
-    private void configureBindings() {
+    /**
+     * binds specific buttons within the {@link #xboxController}
+     * to specific functionalities within the robot's subsystems
+     */
+    private void configureBindings()
+    {
+        // swerve
         swerve.setDefaultCommand(
                 swerve.driveCommand(
                         () -> -MathUtil.applyDeadband(xboxController.getLeftY(),
@@ -67,7 +99,7 @@ public class RobotContainer {
         xboxController.y().whileTrue(indexer.beltForward());
         xboxController.b().whileTrue(superstructure.climb());
 
-
+        // TESTING COMMANDS
 //        xboxController.x().whileTrue(
 //                        shooter.getQuasistatic(SysIdRoutine.Direction.kForward)
 //        );
@@ -91,22 +123,16 @@ public class RobotContainer {
 //                swerve.sysIdDriveMotorCommand()
 //        );
     }
-    
-    
+
+    /**
+     * returns the auton that is currently selected on the auton selector;
+     * that is, the auton that would theoretically run if the robot was
+     * enabled
+     *
+     * @return {@link Command}
+     */
     public Command getAutonomousCommand()
     {
         return autoChooser.getSelected();
     }
 }
-
-/*
- * good autos
- * full field localization
- * control theory - how to move arms
- * shooter regression
- *
- * basic robot functions with states
- *  - swerve
- *  - intake
- *  - shooter
- */
