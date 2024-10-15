@@ -52,12 +52,13 @@ public class Ampevator extends SubsystemBase {
         if(needsHome){
             elevator1.setVoltage(AmpevatorConstants.HOMING_SPEED);
             double current = elevator1.getOutputCurrent();
-            if(current > 5/*amp*/){
+            SmartDashboard.putNumber("Ampevator/Current", current);
+            if(current > .2/*amp*/){
                 elevator1.set(0);
                 needsHome = false;
                 encoder.setPosition(0);
-                goal = encoder.getPosition();
-                controller.reset(encoder.getPosition());
+                goal = 0;
+                controller.reset(0);
             }
         } else {
             goal = clamp(goal, 0, AmpevatorConstants.EXTENSION_HEIGHT);

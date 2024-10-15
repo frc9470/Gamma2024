@@ -144,8 +144,8 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command intakeNote(){
-        return  intakeRollers.intakeIn()
-                    .alongWith(indexer.beltForward()).until(indexer::hasNote)
+        return intakeRollers.intakeIn()
+                    .alongWith(indexer.beltThrough()).until(indexer::hasNote)
                 .andThen(
                         indexer.beltStop().alongWith(intakeRollers.intakeStop())
                 )
@@ -178,15 +178,15 @@ public class Superstructure extends SubsystemBase {
                 new InstantCommand(() -> shotType = type),
                 new ParallelCommandGroup(
                         // wait for shooter to spin up
-                        shooter.waitReady(),
+                        shooter.waitReady()
                         // wait for hood to get to correct angle
-                        hood.waitReady()
+//                        hood.waitReady()
                         // wait for heading to update
 //                        swerve.aimAtYaw(() -> swerve.getHeading().plus(parameters.heading()))
                 ),
-                new WaitCommand(1).deadlineWith(indexer.beltMaxForward()),
+                new WaitCommand(1).deadlineWith(indexer.beltThrough().alongWith(intakeRollers.intakeIn())),
                 new InstantCommand(() -> shotType = defaultType)
-        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0);});
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0); intakeRollers.intakeStop();});
     }
 
     public Command autonShot(){

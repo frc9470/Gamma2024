@@ -30,7 +30,7 @@ public class Consts {
         public static final double FF2_V = 0.0013913;
         public static final double FF2_A = 0.0005497;
         public static final TunableNumber PID_P = new TunableNumber("Shooter/PID_P", 0.0009259259259, true);
-        public static final double TOLERANCE = 50;
+        public static final double TOLERANCE = 100;
         public static final ShotParameters SUBWOOFER = new ShotParameters(1.1, 5400, 1.3, new Rotation2d()); // ignore rotation
         public static final ShotParameters PODIUM = new ShotParameters(2.63, 5400, 0.59, new Rotation2d());
         public static final ShotParameters PODIUM_SIDE = new ShotParameters(2.97, 5400, 1, new Rotation2d());
@@ -39,8 +39,7 @@ public class Consts {
 
     public static class IntakeConstants{
         public static final int INTAKE_ROLLER_ID = 22;
-        public static final boolean IS_TUNING = false;
-        public static final TunableNumber INTAKE_TAKE_IN_VOLTAGE = new TunableNumber("Intake/Roller_Voltage", 6.0, IS_TUNING);
+        public static final double INTAKE_TAKE_IN_VOLTAGE = 8.0;
     }
 
     public static class HoodConstants{
@@ -50,7 +49,7 @@ public class Consts {
         public static final ArmConfiguration HOOD = new ArmConfiguration(
                 "Hood",
                 16,  // motorId
-                1,   // encoderPort
+                0,   // encoderPort
                 0.64, // ffG
                 0.64+.42,   // absoluteOffset
                 1.0,  // encoderRatio (assuming no ratio for hood)
@@ -82,10 +81,10 @@ public class Consts {
     public static class AmpevatorConstants {
         public static final int ID_1 = 20;
         public static final int ID_2 = 21;
-        public static final boolean INVERTED = false;
+        public static final boolean INVERTED = true;
         public static final int ROLLER_ID = 19;
 
-        public static final double KP = .1;
+        public static final double KP = 5;
         public static final double KI = 0.0;
         public static final double KD = 0.0;
 

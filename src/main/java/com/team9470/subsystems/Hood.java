@@ -17,7 +17,7 @@ public class Hood extends AbstractArm {
     private static Hood instance;
 
     private Hood() {
-        super(HOOD, true);
+        super(HOOD, false);
         motor.setInverted(true);
     }
 

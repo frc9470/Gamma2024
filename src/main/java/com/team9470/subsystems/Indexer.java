@@ -25,6 +25,7 @@ public class Indexer extends SubsystemBase {
 
         topRollers.restoreFactoryDefaults();
         topRollers.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        topRollers.setInverted(true);
     }
 
 
@@ -49,23 +50,28 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command beltForward (){ // up to amp
-        return this.runEnd(() -> { setTop(-FORWARD_VOLTAGE); setBottom(FORWARD_VOLTAGE);}, () -> setBottom(0.0));
+        return this.runEnd(() -> { setTop(-FORWARD_VOLTAGE); setBottom(FORWARD_VOLTAGE);}, this::stopAll);
     }
 
     public Command beltThrough (){ // through
-        return this.runEnd(() -> { setTop(FORWARD_VOLTAGE); setBottom(FORWARD_VOLTAGE);}, () -> setBottom(0.0));
+        return this.runEnd(() -> { setTop(FORWARD_VOLTAGE); setBottom(FORWARD_VOLTAGE);}, this::stopAll);
     }
 
     public Command beltMaxForward (){
-        return this.runEnd(() -> { setTop(BELT_MAX_FORWARD_VOLTAGE); setBottom(BELT_MAX_FORWARD_VOLTAGE);}, () -> setBottom(0.0));
+        return this.runEnd(() -> { setTop(BELT_MAX_FORWARD_VOLTAGE); setBottom(BELT_MAX_FORWARD_VOLTAGE);}, this::stopAll);
     }
 
     public Command beltBackward (){
-        return this.runEnd(() -> { setTop(-FORWARD_VOLTAGE); setBottom(-FORWARD_VOLTAGE);}, () -> setBottom(0.0));
+        return this.runEnd(() -> { setTop(-FORWARD_VOLTAGE); setBottom(-FORWARD_VOLTAGE);}, this::stopAll);
     }
 
     public Command beltStop (){
         return new InstantCommand(() -> setBottom(0.0));
+    }
+
+    private void stopAll() {
+        setTop(0);
+        setBottom(0);
     }
 
     public Command waitNote(boolean desiredState){
