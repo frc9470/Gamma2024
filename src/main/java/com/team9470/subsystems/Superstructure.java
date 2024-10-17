@@ -229,7 +229,13 @@ public class Superstructure extends SubsystemBase {
         return indexer.beltForward()
                 .alongWith(ampevator.rollerOut())
                 .alongWith(intakeRollers.intakeIn())
-                .until(ampevator::hasNote);
+                .until(ampevator::hasNote)
+                .andThen(new WaitCommand(0.2) // Wait for 0.5 seconds
+                        .deadlineWith(
+                                intakeRollers.intakeIn(), // Continue running the rollers during the wait
+                                ampevator.rollerOut()
+                        )
+                );
     }
 
     public Command ampNote(){

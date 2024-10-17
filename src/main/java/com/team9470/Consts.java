@@ -84,15 +84,15 @@ public class Consts {
         public static final boolean INVERTED = true;
         public static final int ROLLER_ID = 19;
 
-        public static final double KP = 7;
+        public static final double KP = 10;
         public static final double KI = 0.0;
         public static final double KD = 0.0;
 
-        public static final double VELOCITY_LIMIT = .5; //(m/s)
-        public static final double ACCELERATION_LIMIT = .6; //(m/s)
+        public static final double VELOCITY_LIMIT = .6; //(m/s)
+        public static final double ACCELERATION_LIMIT = 2.0; //(m/s)
 
         public static final double KS = 0.0;
-        public static final double KG = 0.24;
+        public static final double KG = 0.22;
         public static final double KV = 7.01; // v/(m/s)
         public static final double KA = 0.03; // v/(m/s^2)
 
