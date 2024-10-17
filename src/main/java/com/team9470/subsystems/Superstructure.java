@@ -37,7 +37,6 @@ public class Superstructure extends SubsystemBase {
 
     public ShotParameters parameters = null;
 
-
     // CONSTANTS
 
     /**
@@ -55,7 +54,7 @@ public class Superstructure extends SubsystemBase {
 
     // RUNTIME VARIABLES
 
-    public ShotType defaultType = ShotType.AUTO;
+    public ShotType defaultType = ShotType.STEADY;
     public ShotType shotType = defaultType;
 
     // RUNTIME VARIABLES
@@ -145,7 +144,7 @@ public class Superstructure extends SubsystemBase {
 
     public Command intakeNote(){
         return intakeRollers.intakeIn()
-                    .alongWith(indexer.beltThrough()).until(indexer::hasNote)
+                    .alongWith(indexer.beltForward()).until(indexer::hasNote)
                 .andThen(
                         indexer.beltStop().alongWith(intakeRollers.intakeStop())
                 )
@@ -229,11 +228,12 @@ public class Superstructure extends SubsystemBase {
     public Command intakeAmp(){
         return indexer.beltForward()
                 .alongWith(ampevator.rollerOut())
+                .alongWith(intakeRollers.intakeIn())
                 .until(ampevator::hasNote);
     }
 
     public Command ampNote(){
-        return ampevator.ampNote();
+        return ampevator.ampNote().handleInterrupt(() -> ampevator.setGoal(0));
     }
 
     /**

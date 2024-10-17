@@ -12,7 +12,7 @@ public class Consts {
     public static class IndexerConstants{
         public static final int BOTTOM_ROLLER_ID = 14;
         public static final int TOP_ROLLER_ID = 15;
-        public static final int BEAM_BREAK_ID = 2;
+        public static final int BEAM_BREAK_ID = 1;
         public static final double FORWARD_VOLTAGE = 6;
         public static final double BELT_MAX_FORWARD_VOLTAGE = 12;
         public static final double BELT_BACKWARD_VOLTAGE = -6;
@@ -84,15 +84,15 @@ public class Consts {
         public static final boolean INVERTED = true;
         public static final int ROLLER_ID = 19;
 
-        public static final double KP = 5;
+        public static final double KP = 7;
         public static final double KI = 0.0;
         public static final double KD = 0.0;
 
-        public static final double VELOCITY_LIMIT = .1; //(m/s)
-        public static final double ACCELERATION_LIMIT = .3; //(m/s)
+        public static final double VELOCITY_LIMIT = .5; //(m/s)
+        public static final double ACCELERATION_LIMIT = .6; //(m/s)
 
         public static final double KS = 0.0;
-        public static final double KG = 0.26;
+        public static final double KG = 0.24;
         public static final double KV = 7.01; // v/(m/s)
         public static final double KA = 0.03; // v/(m/s^2)
 

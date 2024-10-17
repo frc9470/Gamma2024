@@ -1,5 +1,6 @@
 package com.team9470.subsystems;
 
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -35,9 +36,18 @@ public class Ampevator extends SubsystemBase {
         elevator1.setInverted(AmpevatorConstants.INVERTED);
         elevator2.setInverted(AmpevatorConstants.INVERTED);
 
+        elevator1.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        elevator2.setIdleMode(CANSparkBase.IdleMode.kBrake);
+        elevator1.setSmartCurrentLimit(60);
+        elevator1.setSmartCurrentLimit(60);
+
         elevator2.follow(elevator1, false);
 
         encoder.setPositionConversionFactor(AmpevatorConstants.RATIO_MPR);
+
+        rollers.restoreFactoryDefaults();
+        rollers.setSmartCurrentLimit(40, 60);
+        rollers.setInverted(false);
     }
 
     public static Ampevator getInstance(){
@@ -85,6 +95,10 @@ public class Ampevator extends SubsystemBase {
         return !beamBreak.get();
     }
 
+    public void setGoal(double goal) {
+        this.goal = goal;
+    }
+
 
     /**
      * Command to instantly set the target position of the elevator without waiting for it to reach the target
@@ -123,9 +137,8 @@ public class Ampevator extends SubsystemBase {
                                     new WaitCommand(1)
                                             .andThen(toTarget(0))
                             )
-                        ),
-                    toTarget(0)
-                );
+                        )
+                ).andThen(rollerStop());
     }
 
     public Command rollerOut() {

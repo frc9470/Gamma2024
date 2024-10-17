@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.team9470.subsystems.*;
 import com.team9470.subsystems.vision.Vision;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +30,8 @@ public class RobotContainer {
 
 
     // INTAKE ECOSYSTEM
+
+    private final Ampevator ampevator = Ampevator.getInstance();
 
     private final Superstructure superstructure = new Superstructure();
 
@@ -91,7 +94,12 @@ public class RobotContainer {
         xboxController.rightTrigger().whileTrue(superstructure.staticShot(Superstructure.ShotType.SUBWOOFER));
         xboxController.leftTrigger().whileTrue(superstructure.ampNote());
 
-        xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
+        xboxController.povDown().onTrue(ampevator.home());
+        xboxController.povLeft().whileTrue(ampevator.toTarget(0));
+        xboxController.povRight().whileTrue(ampevator.toTarget(Units.inchesToMeters(5)));
+        xboxController.povUp().whileTrue(ampevator.toTarget(Units.inchesToMeters(18)));
+
+//        xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
 
         xboxController.a().onTrue(new InstantCommand(swerve::zeroGyroWithAlliance));
 
