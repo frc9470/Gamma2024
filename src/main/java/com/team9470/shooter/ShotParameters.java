@@ -23,7 +23,7 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
     private static final boolean tuning = false;
 
     private static final TunableNumber rpmTune = new TunableNumber("Shooter/rpm", 0.0, tuning);
-    private static final TunableNumber angleTune = new TunableNumber("Shooter/angle", 0.55, tuning);
+    private static final TunableNumber angleTune = new TunableNumber("Shooter/angle", 45, tuning);
     private static final TunableNumber yawTune = new TunableNumber("Shooter/yaw", 0.0, tuning);
 
     /**
@@ -55,7 +55,7 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
         }
 
         double rpm = getShooterSpeed(range);
-        double angle = getShooterAngle(range)*Math.PI / 180.0;
+        double angle = getShooterAngle(range);
         double heading = yaw + getShooterYaw(range);
 //        System.out.println(yaw);
 //        System.out.println(getShooterYaw(range));

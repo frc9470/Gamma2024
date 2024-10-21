@@ -2,7 +2,6 @@ package com.team9470;
 
 import com.pathplanner.lib.util.PIDConstants;
 import com.team9470.shooter.ShotParameters;
-import com.team9470.subsystems.arm.ArmConfiguration;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -12,7 +11,7 @@ public class Consts {
     public static class IndexerConstants{
         public static final int BOTTOM_ROLLER_ID = 14;
         public static final int TOP_ROLLER_ID = 15;
-        public static final int BEAM_BREAK_ID = 1;
+        public static final int BEAM_BREAK_ID = 2;
         public static final double FORWARD_VOLTAGE = 6;
         public static final double BELT_MAX_FORWARD_VOLTAGE = 12;
         public static final double BELT_BACKWARD_VOLTAGE = -6;
@@ -31,9 +30,9 @@ public class Consts {
         public static final double FF2_A = 0.0005497;
         public static final TunableNumber PID_P = new TunableNumber("Shooter/PID_P", 0.0009259259259, true);
         public static final double TOLERANCE = 100;
-        public static final ShotParameters SUBWOOFER = new ShotParameters(1.1, 5400, 1.3, new Rotation2d()); // ignore rotation
-        public static final ShotParameters PODIUM = new ShotParameters(2.63, 5400, 0.59, new Rotation2d());
-        public static final ShotParameters PODIUM_SIDE = new ShotParameters(2.97, 5400, 1, new Rotation2d());
+        public static final ShotParameters SUBWOOFER = new ShotParameters(1.1, 5400, 45, new Rotation2d()); // ignore rotation
+        public static final ShotParameters PODIUM = new ShotParameters(2.63, 5400, 40, new Rotation2d());
+        public static final ShotParameters PODIUM_SIDE = new ShotParameters(2.97, 5400, 35, new Rotation2d());
         public static final ShotParameters AMP = null;
     }
 
@@ -42,22 +41,33 @@ public class Consts {
         public static final double INTAKE_TAKE_IN_VOLTAGE = 8.0;
     }
 
-    public static class HoodConstants{
-        public static final double TOLERANCE = 0.01;
+    /**
+     * Constants for the Hood subsystem.
+     */
+    public static class HoodConstants {
+        // Motor and encoder configuration
+        public static final int MOTOR_ID = 16;
+        public static final int ENCODER_PORT = 0;
 
-        public static final boolean IS_TUNING = false;
-        public static final ArmConfiguration HOOD = new ArmConfiguration(
-                "Hood",
-                16,  // motorId
-                0,   // encoderPort
-                0.64, // ffG
-                0.64+.42,   // absoluteOffset
-                1.0,  // encoderRatio (assuming no ratio for hood)
-                10);
+        // Feedforward constants
+        public static final double FF_G = 0.64;
+        public static final double ABSOLUTE_OFFSET = 5.84;
+        public static final double ENCODER_RATIO = 1.0;
 
-        public static final double AMP_POS = 1.35;
-        public static final double STEADY_POS = 1;
+        // PID Tuning
+        public static final TunableNumber PID_P = new TunableNumber("Hood/PID_P", 0.1, true);
+        public static final TunableNumber PID_D = new TunableNumber("Hood/PID_D", 0.01, true);
+
+        // Motion constraints
+        public static final TunableNumber MAX_VELOCITY = new TunableNumber("Hood/Max_Velocity", 360, true);
+        public static final TunableNumber MAX_ACCEL = new TunableNumber("Hood/Max_Accel", 720, true);
+
+        // Angle limits in degrees
+        public static final double MIN_ANGLE_DEGREES = 14;
+        public static final double MAX_ANGLE_DEGREES = 45;
+        public static final double TOLERANCE_DEGREES = 0.1;
     }
+
 
     public static class SwerveConstants {
         public static final double MAX_SPEED = Units.feetToMeters(16.6); // TODO: is 80% of free speed correct?
@@ -71,9 +81,10 @@ public class Consts {
     }
 
     public static class VisionConstants {
-        public static final Transform3d FRONT_LEFT_CAMERA_OFFSET = new Transform3d(Units.inchesToMeters(9.611), Units.inchesToMeters(9.481),Units.inchesToMeters(7.495), new Rotation3d(3.14, 0.49, 0.52));
-        public static final Transform3d FRONT_RIGHT_CAMERA_OFFSET = new Transform3d(9.611, -9.481,7.495, new Rotation3d(0, 0.49, -0.52));
-        public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(9.611, 0,0, new Rotation3d(0, 0, 0));
+        public static final Transform3d FRONT_LEFT_CAMERA_OFFSET = new Transform3d(Units.inchesToMeters(-6.416074), Units.inchesToMeters(+6.234908), Units.inchesToMeters(24.876993),
+                new Rotation3d(0.09392524897328626, 0.3366914160154886, 0.2777737906616184));
+        public static final Transform3d FRONT_RIGHT_CAMERA_OFFSET = new Transform3d(Units.inchesToMeters(-6.416074), Units.inchesToMeters(-6.234908), Units.inchesToMeters(24.876993),
+                new Rotation3d(-0.09392524897328626, 0.3366914160154886, -0.2777737906616184));
 
 
     }
@@ -84,7 +95,7 @@ public class Consts {
         public static final boolean INVERTED = true;
         public static final int ROLLER_ID = 19;
 
-        public static final double KP = 10;
+        public static final double KP = 5;
         public static final double KI = 0.0;
         public static final double KD = 0.0;
 

@@ -135,7 +135,7 @@ public class Ampevator extends SubsystemBase {
                         .andThen(rollerOut()
                             .deadlineWith(
                                     new WaitCommand(1)
-                                            .andThen(toTarget(0))
+                                            .andThen(setTarget(0))
                             )
                         )
                 ).andThen(rollerStop());

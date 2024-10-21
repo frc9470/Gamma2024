@@ -14,7 +14,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -25,13 +24,13 @@ import java.util.Optional;
 
 public class VisionDevice {
 
-    private final PhotonCamera photonCamera;
+    private final DeltaPhotonCamera photonCamera;
     private final PhotonPoseEstimator photonPoseEstimator;
     private static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
 
     public VisionDevice(String name, Transform3d transform) {
-        this.photonCamera = new PhotonCamera(name);
+        this.photonCamera = new DeltaPhotonCamera(name);
         photonPoseEstimator = new PhotonPoseEstimator(
                 aprilTagFieldLayout,
                 PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -42,11 +41,16 @@ public class VisionDevice {
     }
 
     // ONLY CALL ONCE PER CAMERA PER ROBOT LOOP
+    private int heartbeat = 0;
     public void updatePosition(Swerve swerve) {
+        SmartDashboard.putNumber("Vision/" + photonCamera.getName() + "/Heartbeat", heartbeat++);
         LogUtil.recordTransform3d("Vision/" + photonCamera.getName() + "/Robot to Camera Transform", photonPoseEstimator.getRobotToCameraTransform());
 
         List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
+        SmartDashboard.putNumber("Vision/" + photonCamera.getName() + "/results", results.size());
         for (PhotonPipelineResult result : results) {
+//            PhotonPipelineResult result = photonCamera.getLatestResult();
+            System.out.println("vision result!");
             Optional<EstimatedRobotPose> posEstimate = photonPoseEstimator.update(result);
             if (posEstimate.isEmpty()) {
                 return;
@@ -95,7 +99,8 @@ public class VisionDevice {
             swerve.addVisionMeasurement(robotPose.toPose2d(), timestamp, new Matrix<>(Nat.N3(), Nat.N1(), new double[]{xyStdDev, xyStdDev, 0.02}));
 
             // Calculate and log rotation
-            //double rotationDegrees = calculateRotation(pose, Swerve.isRedAlliance());
+            double rotationDegrees = calculateRotation(pose, Swerve.isRedAlliance());
+
 //        logRotation(rotationDegrees);
         }
     }
@@ -158,7 +163,7 @@ public class VisionDevice {
      * Get the Photon Camera object
      * @return The Photon Camera object
      */
-    public PhotonCamera returnCam() {
+    public DeltaPhotonCamera returnCam() {
         return photonCamera;
     }
 

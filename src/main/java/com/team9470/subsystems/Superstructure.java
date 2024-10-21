@@ -92,7 +92,7 @@ public class Superstructure extends SubsystemBase {
                 }
 
                 if (parameters == null || parameters.distance() > 10.4){
-                    hood.setGoal(1);
+                    hood.setGoalDegrees(45);
                     shooter.setVelocity(STEADY_RPM);
                     return;
                 }
@@ -103,7 +103,7 @@ public class Superstructure extends SubsystemBase {
                 count++;
             }
             case STEADY -> {
-                hood.setGoal(1);
+                hood.setGoalDegrees(30);
                 shooter.setVelocity(STEADY_RPM);
                 return;
             }
@@ -111,33 +111,26 @@ public class Superstructure extends SubsystemBase {
                     parameters = Consts.ShooterConstants.SUBWOOFER;
             case PODIUM -> parameters = Consts.ShooterConstants.PODIUM;
             case PODIUM_SIDE -> parameters = Consts.ShooterConstants.PODIUM_SIDE;
-            case AMP -> {
-                // we can't use the static shot parameters method here
-                // we must mess with the top and bottom roller tuning to achieve the desired spin effect
-                shooter.setVelocity(1000, 2500);
-                hood.setGoal(Consts.HoodConstants.AMP_POS);
-                return;
-            }
             case FEED -> { // update to use actual regression maps
                 shooter.setVelocity(5400);
-                hood.setGoal(1.2);
+                hood.setGoalDegrees(30);
                 return;
             }
             case REVERSE -> { // broken
                 shooter.setVelocity(-3000);
-                hood.setGoal(0.7);
+                hood.setGoalDegrees(40);
             }
             case CLIMBING -> {
                 shooter.setVelocity(0);
-                hood.setGoal(1.5);
+                hood.setGoalDegrees(45);
             }
         }
 
-        hood.setGoal(parameters.angle());
+        hood.setGoalDegrees(parameters.angle());
         shooter.setVelocity(parameters.rpm());
 
         SmartDashboard.putNumber("FiringParams/Distance to target", parameters.distance());
-        SmartDashboard.putNumber("FiringParams/HoodError", parameters.angle() - hood.getPosition());
+        SmartDashboard.putNumber("FiringParams/HoodError", parameters.angle() - hood.getPositionDegrees());
         SmartDashboard.putNumber("FiringParams/TargetHeading", parameters.heading().getDegrees());
         SmartDashboard.putNumber("FiringParams/CurrentHeading", swerve.getHeading().getDegrees());
     }

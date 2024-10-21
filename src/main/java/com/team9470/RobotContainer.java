@@ -99,7 +99,7 @@ public class RobotContainer {
         xboxController.povRight().whileTrue(ampevator.toTarget(Units.inchesToMeters(5)));
         xboxController.povUp().whileTrue(ampevator.toTarget(Units.inchesToMeters(18)));
 
-//        xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
+//      xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
 
         xboxController.a().onTrue(new InstantCommand(swerve::zeroGyroWithAlliance));
 
