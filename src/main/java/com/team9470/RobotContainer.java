@@ -103,9 +103,9 @@ public class RobotContainer {
 
         xboxController.a().onTrue(new InstantCommand(swerve::zeroGyroWithAlliance));
 
-        xboxController.x().whileTrue(superstructure.shootNote());
-        xboxController.y().whileTrue(indexer.beltForward());
-        xboxController.b().whileTrue(superstructure.climb());
+        xboxController.x().whileTrue(superstructure.reverse());
+        xboxController.y().whileTrue(superstructure.shootNote());
+        //xboxController.b().whileTrue(superstructure.climb());
 
         // TESTING COMMANDS
 //        xboxController.x().whileTrue(

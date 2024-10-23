@@ -5,6 +5,7 @@ import com.team9470.Util;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,7 +34,7 @@ public class Hood extends SubsystemBase {
         // Initialize motor and encoder with hardcoded IDs and ports
         motor = new CANSparkMax(HoodConstants.MOTOR_ID, CANSparkMax.MotorType.kBrushless);
         encoder = new DutyCycleEncoder(HoodConstants.ENCODER_PORT);
-        ff = new ArmFeedforward(0, HoodConstants.FF_G, 0);
+        ff = new ArmFeedforward(0, HoodConstants.FF_G, HoodConstants.FF_V);
 
         // Set up the PID controller with hardcoded constraints and gains
         pid = new ProfiledPIDController(
@@ -53,13 +54,15 @@ public class Hood extends SubsystemBase {
         return instance;
     }
 
+
+
     @Override
     public void periodic() {
-        if (init) {
-            goalDegrees = getPositionDegrees();
-            pid.reset(goalDegrees);
-            init = false;
-        }
+//        if (init) {
+//            goalDegrees = getPositionDegrees();
+//            pid.reset(goalDegrees);
+//            init = false;
+//        }
 
         // Update PID constants if changed
         if (HoodConstants.PID_P.hasChanged() || HoodConstants.PID_D.hasChanged() ||
@@ -69,9 +72,14 @@ public class Hood extends SubsystemBase {
         }
 
         // Calculate motor output
-        double output = pid.calculate(getPositionDegrees(), goalDegrees) +
-                ff.calculate(getPositionRadians()+7.5, 0);
-        if (enabled) motor.setVoltage(output);
+        if (DriverStation.isEnabled()) {
+            double output = pid.calculate(getPositionDegrees(), goalDegrees) +
+                    ff.calculate(getPositionRadians() + Math.toRadians(+7.5), pid.getSetpoint().velocity);
+            if (enabled) motor.setVoltage(output);
+        } else {
+            goalDegrees = getPositionDegrees();
+            pid.reset(goalDegrees);
+        }
 
         // Clamp goal within a certain range of degrees
         goalDegrees = Util.clamp(goalDegrees, HoodConstants.MIN_ANGLE_DEGREES, HoodConstants.MAX_ANGLE_DEGREES);
@@ -80,6 +88,8 @@ public class Hood extends SubsystemBase {
 
         updateSmartDashboard();
     }
+
+
 
     /**
      * Get the current position of the encoder in radians.
@@ -111,8 +121,8 @@ public class Hood extends SubsystemBase {
         SmartDashboard.putNumber("Hood/RawEncoderOutput", encoder.getAbsolutePosition());
         SmartDashboard.putNumber("Hood/ArmOutput", motor.getAppliedOutput());
         SmartDashboard.putNumber("Hood/Goal (Degrees)", goalDegrees);
-        SmartDashboard.putNumber("Hood/Setpoint (Degrees)", Math.toDegrees(pid.getSetpoint().position));
-        SmartDashboard.putNumber("Hood/Velocity (Degrees/s)", Math.toDegrees(pid.getSetpoint().velocity));
+        SmartDashboard.putNumber("Hood/Setpoint (Degrees)", pid.getSetpoint().position);
+        SmartDashboard.putNumber("Hood/Velocity (dps)", pid.getSetpoint().velocity);
     }
 
     /**

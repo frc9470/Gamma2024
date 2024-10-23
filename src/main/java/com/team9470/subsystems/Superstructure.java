@@ -114,11 +114,11 @@ public class Superstructure extends SubsystemBase {
             case FEED -> { // update to use actual regression maps
                 shooter.setVelocity(5400);
                 hood.setGoalDegrees(30);
-                return;
             }
             case REVERSE -> { // broken
                 shooter.setVelocity(-3000);
                 hood.setGoalDegrees(40);
+
             }
             case CLIMBING -> {
                 shooter.setVelocity(0);
@@ -137,7 +137,8 @@ public class Superstructure extends SubsystemBase {
 
     public Command intakeNote(){
         return intakeRollers.intakeIn()
-                    .alongWith(indexer.beltForward()).until(indexer::hasNote)
+                    .alongWith(indexer.beltThrough()).until(indexer::hasNote)
+                .andThen(new WaitCommand(.5))
                 .andThen(
                         indexer.beltStop().alongWith(intakeRollers.intakeStop())
                 )
@@ -149,7 +150,7 @@ public class Superstructure extends SubsystemBase {
 
     public Command shootNote(){
         return new SequentialCommandGroup(
-                new InstantCommand(() -> System.out.println("Shooting!")),
+                new InstantCommand(() -> System.out.println("Shooting, shotparameters " + parameters)),
                 new ParallelCommandGroup(
                     // wait for shooter to spin up
                     shooter.waitReady(),
@@ -158,7 +159,7 @@ public class Superstructure extends SubsystemBase {
                     // wait for heading to update
                     swerve.aimAtYaw(() -> parameters != null ? parameters.heading() : new Rotation2d()).onlyIf(() -> parameters != null)
                 ),
-                indexer.beltThrough().until(() -> !indexer.hasNote()),
+                indexer.beltMaxForward().until(() -> !indexer.hasNote()),
                 new WaitCommand(0.3),
                 indexer.beltStop()
         );
@@ -170,13 +171,13 @@ public class Superstructure extends SubsystemBase {
                 new InstantCommand(() -> shotType = type),
                 new ParallelCommandGroup(
                         // wait for shooter to spin up
-                        shooter.waitReady()
+//                        shooter.waitReady()
                         // wait for hood to get to correct angle
-//                        hood.waitReady()
+                        hood.waitReady()
                         // wait for heading to update
 //                        swerve.aimAtYaw(() -> swerve.getHeading().plus(parameters.heading()))
                 ),
-                new WaitCommand(1).deadlineWith(indexer.beltThrough().alongWith(intakeRollers.intakeIn())),
+                new WaitCommand(1).deadlineWith(indexer.beltMaxForward().alongWith(intakeRollers.intakeIn())),
                 new InstantCommand(() -> shotType = defaultType)
         ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0); intakeRollers.intakeStop();});
     }
@@ -214,8 +215,8 @@ public class Superstructure extends SubsystemBase {
     public Command reverse(){
         return new SequentialCommandGroup(
                 new InstantCommand(() -> shotType = ShotType.REVERSE),
-                indexer.beltBackward()
-        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0);});
+                indexer.beltBackward().alongWith(intakeRollers.intakeOut()).alongWith(ampevator.rollerIn())
+        ).handleInterrupt(() -> {shotType = defaultType; indexer.setBottom(0); intakeRollers.intakeStop(); ampevator.rollerStop();});
     }
 
     public Command intakeAmp(){

@@ -145,6 +145,10 @@ public class Ampevator extends SubsystemBase {
         return this.runEnd(() -> rollers.setVoltage(AmpevatorConstants.ROLLER_SPEED), rollers::stopMotor);
     }
 
+    public Command rollerIn(){
+        return this.runEnd(() -> rollers.setVoltage(-AmpevatorConstants.ROLLER_SPEED), rollers::stopMotor);
+    }
+
     public Command rollerStop() {
         return new InstantCommand(rollers::stopMotor);
     }

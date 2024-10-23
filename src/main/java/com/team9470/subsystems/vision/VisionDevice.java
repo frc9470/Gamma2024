@@ -50,7 +50,6 @@ public class VisionDevice {
         SmartDashboard.putNumber("Vision/" + photonCamera.getName() + "/results", results.size());
         for (PhotonPipelineResult result : results) {
 //            PhotonPipelineResult result = photonCamera.getLatestResult();
-            System.out.println("vision result!");
             Optional<EstimatedRobotPose> posEstimate = photonPoseEstimator.update(result);
             if (posEstimate.isEmpty()) {
                 return;
@@ -96,10 +95,10 @@ public class VisionDevice {
             }
 
             // Update robot state with vision data
-            swerve.addVisionMeasurement(robotPose.toPose2d(), timestamp, new Matrix<>(Nat.N3(), Nat.N1(), new double[]{xyStdDev, xyStdDev, 0.02}));
+            swerve.addVisionMeasurement(robotPose.toPose2d(), timestamp, new Matrix<>(Nat.N3(), Nat.N1(), new double[]{xyStdDev, xyStdDev, xyStdDev}));
 
             // Calculate and log rotation
-            double rotationDegrees = calculateRotation(pose, Swerve.isRedAlliance());
+//            double rotationDegrees = calculateRotation(pose, Swerve.isRedAlliance());
 
 //        logRotation(rotationDegrees);
         }
