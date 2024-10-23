@@ -37,7 +37,7 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
      */
     public static ShotParameters calculate(Pose2d pose, Twist2d velocity, boolean isRedAlliance, boolean shootOnMove) {
         Translation2d target = FieldLayout.handleAllianceFlip(SPEAKER_CENTER.getTranslation(), isRedAlliance);
-        Translation2d targetRelative = pose.getTranslation().minus(target);
+        Translation2d targetRelative = target.minus(pose.getTranslation());
 
         double yaw = targetRelative.getAngle().getDegrees();
         double distance = targetRelative.getNorm();

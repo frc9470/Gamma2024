@@ -27,9 +27,10 @@ public class Superstructure extends SubsystemBase {
     private final Swerve swerve = Swerve.getInstance();
     private final Hood hood = Hood.getInstance();
     private final Shooter shooter = Shooter.getInstance();
+    private final Ampevator ampevator = Ampevator.getInstance();
 
     // TODO: NOT USING FOR NOW
-    private final Ampevator ampevator = Ampevator.getInstance();
+
     private final Climber climber = Climber.getInstance();
 
 
@@ -54,7 +55,7 @@ public class Superstructure extends SubsystemBase {
 
     // RUNTIME VARIABLES
 
-    public ShotType defaultType = ShotType.STEADY;
+    public ShotType defaultType = ShotType.AUTO;
     public ShotType shotType = defaultType;
 
     // RUNTIME VARIABLES
@@ -127,7 +128,7 @@ public class Superstructure extends SubsystemBase {
         }
 
         hood.setGoalDegrees(parameters.angle());
-        shooter.setVelocity(parameters.rpm());
+//        shooter.setVelocity(parameters.rpm());
 
         SmartDashboard.putNumber("FiringParams/Distance to target", parameters.distance());
         SmartDashboard.putNumber("FiringParams/HoodError", parameters.angle() - hood.getPositionDegrees());
@@ -138,7 +139,7 @@ public class Superstructure extends SubsystemBase {
     public Command intakeNote(){
         return intakeRollers.intakeIn()
                     .alongWith(indexer.beltThrough()).until(indexer::hasNote)
-                .andThen(new WaitCommand(.5))
+                .andThen(indexer.beltThrough().alongWith(intakeRollers.intakeIn()).withTimeout(.3))
                 .andThen(
                         indexer.beltStop().alongWith(intakeRollers.intakeStop())
                 )
@@ -153,7 +154,7 @@ public class Superstructure extends SubsystemBase {
                 new InstantCommand(() -> System.out.println("Shooting, shotparameters " + parameters)),
                 new ParallelCommandGroup(
                     // wait for shooter to spin up
-                    shooter.waitReady(),
+//                    shooter.waitReady(),
                     // wait for hood to get to correct angle
                     hood.waitReady(),
                     // wait for heading to update

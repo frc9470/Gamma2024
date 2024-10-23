@@ -64,6 +64,9 @@ public class Hood extends SubsystemBase {
 //            init = false;
 //        }
 
+        // Clamp goal so soft-limits exist
+        goalDegrees = Util.clamp(goalDegrees, HoodConstants.MIN_ANGLE_DEGREES, HoodConstants.MAX_ANGLE_DEGREES);
+
         // Update PID constants if changed
         if (HoodConstants.PID_P.hasChanged() || HoodConstants.PID_D.hasChanged() ||
                 HoodConstants.MAX_VELOCITY.hasChanged() || HoodConstants.MAX_ACCEL.hasChanged()) {
@@ -80,9 +83,6 @@ public class Hood extends SubsystemBase {
             goalDegrees = getPositionDegrees();
             pid.reset(goalDegrees);
         }
-
-        // Clamp goal within a certain range of degrees
-        goalDegrees = Util.clamp(goalDegrees, HoodConstants.MIN_ANGLE_DEGREES, HoodConstants.MAX_ANGLE_DEGREES);
 
         SmartDashboard.putBoolean("Hood/READY", Math.abs(getPositionDegrees() - goalDegrees) < HoodConstants.TOLERANCE_DEGREES);
 

@@ -57,15 +57,15 @@ public class Consts {
 
         // PID Tuning
         public static final TunableNumber PID_P = new TunableNumber("Hood/PID_P", 0.3, true);
-        public static final TunableNumber PID_D = new TunableNumber("Hood/PID_D", 0.01, true);
+        public static final TunableNumber PID_D = new TunableNumber("Hood/PID_D", 0.005, true);
 
         // Motion constraints
-        public static final TunableNumber MAX_VELOCITY = new TunableNumber("Hood/Max_Velocity", 75, true);
-        public static final TunableNumber MAX_ACCEL = new TunableNumber("Hood/Max_Accel", 100, true);
+        public static final TunableNumber MAX_VELOCITY = new TunableNumber("Hood/Max_Velocity", 50, true);
+        public static final TunableNumber MAX_ACCEL = new TunableNumber("Hood/Max_Accel", 250, true);
 
         // Angle limits in degrees
-        public static final double MIN_ANGLE_DEGREES = 14;
-        public static final double MAX_ANGLE_DEGREES = 45;
+        public static final double MIN_ANGLE_DEGREES = 7;
+        public static final double MAX_ANGLE_DEGREES = 50;
         public static final double TOLERANCE_DEGREES = 0.5;
     }
 
