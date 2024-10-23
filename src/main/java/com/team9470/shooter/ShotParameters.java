@@ -20,10 +20,10 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
 
     private static final Pose2d SPEAKER_CENTER = FieldLayout.kSpeakerCenter;
     private static final double TO_F_FACTOR = 0.2;
-    private static final boolean tuning = true;
+    private static final boolean tuning = false;
 
     private static final TunableNumber rpmTune = new TunableNumber("Shooter/rpm", 0.0, tuning);
-    private static final TunableNumber angleTune = new TunableNumber("Shooter/angle", 0.0, tuning);
+    private static final TunableNumber angleTune = new TunableNumber("Shooter/angle", 45, tuning);
     private static final TunableNumber yawTune = new TunableNumber("Shooter/yaw", 0.0, tuning);
 
     /**
@@ -37,14 +37,14 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
      */
     public static ShotParameters calculate(Pose2d pose, Twist2d velocity, boolean isRedAlliance, boolean shootOnMove) {
         Translation2d target = FieldLayout.handleAllianceFlip(SPEAKER_CENTER.getTranslation(), isRedAlliance);
-        Translation2d targetRelative = pose.getTranslation().minus(target);
+        Translation2d targetRelative = target.minus(pose.getTranslation());
 
         double yaw = targetRelative.getAngle().getDegrees();
         double distance = targetRelative.getNorm();
+        SmartDashboard.putNumber("FiringParams/Uncomped Dist", distance);
         double range;
 
         if (tuning) return new ShotParameters(distance, rpmTune.get(), angleTune.get(), new Rotation2d(yawTune.get()));
-
 
         if (shootOnMove) {
             double[] adjustedParams = adjustForMovement(yaw, distance, velocity);
@@ -57,8 +57,10 @@ public record ShotParameters(double distance, double rpm, double angle, Rotation
         double rpm = getShooterSpeed(range);
         double angle = getShooterAngle(range);
         double heading = yaw + getShooterYaw(range);
+//        System.out.println(yaw);
+//        System.out.println(getShooterYaw(range));
 
-        return new ShotParameters(distance, rpm, angle, new Rotation2d(heading));
+        return new ShotParameters(distance, rpm, angle, Rotation2d.fromDegrees(heading));
     }
 
     public static ShotParameters simple(double distance, double yaw, boolean isRedAlliance){

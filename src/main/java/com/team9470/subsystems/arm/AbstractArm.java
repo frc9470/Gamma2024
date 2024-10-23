@@ -17,7 +17,7 @@ public abstract class AbstractArm extends SubsystemBase {
 
     protected boolean init = true;
     protected double goal = 0;
-    protected boolean enabled = true;
+    protected boolean enabled = false ;
 
     protected AbstractArm(ArmConfiguration config) {
         this.config = config;

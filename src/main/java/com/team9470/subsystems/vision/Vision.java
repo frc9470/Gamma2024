@@ -11,12 +11,12 @@ import static com.team9470.Consts.VisionConstants;
 public class Vision extends SubsystemBase {
     private static Vision instance;
 
-    private final VisionDevice frontL = new VisionDevice("frontL", VisionConstants.FRONT_LEFT_CAMERA_OFFSET);
-//    private final VisionDevice frontR = new VisionDevice("frontR", VisionConstants.FRONT_RIGHT_CAMERA_OFFSET);
+    private final VisionDevice frontL = new VisionDevice("OV2311-L", VisionConstants.FRONT_LEFT_CAMERA_OFFSET);
+    private final VisionDevice frontR = new VisionDevice("OV2311-R", VisionConstants.FRONT_RIGHT_CAMERA_OFFSET);
     //private final VisionDevice back = new VisionDevice("back", VisionConstants.BACK_CAMERA_OFFSET);
     private boolean visionDisabled = false;
 
-    private final List<VisionDevice> devices = List.of(frontL);
+    private final List<VisionDevice> devices = List.of(frontL, frontR);
 
     private Vision() {
     }

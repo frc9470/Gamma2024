@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.photonvision.PhotonUtils;
@@ -37,6 +38,10 @@ import static com.team9470.Consts.AutonConstants;
 import static com.team9470.Consts.SwerveConstants;
 import static org.photonvision.PhotonUtils.getYawToPose;
 
+/**
+ * extension of YAGSL's "SwerveDrive" class, with specific
+ * functionality implemented for our robot
+ */
 public class Swerve extends SubsystemBase {
     private static Swerve instance;
     private final SwerveDrive swerveDrive;
@@ -125,11 +130,20 @@ public class Swerve extends SubsystemBase {
                     setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0,
                             0,
                             controller.headingCalculate(getHeading().getRadians(),
-                                    yawToTarget().getRadians()),
+                                    yaw.get().getRadians()),
                             getHeading())
                     );
                     SmartDashboard.putNumber("AimAtYaw/HeadingError", yaw.get().getDegrees() - getHeading().getDegrees());
-                }).until(() -> yaw.get().getDegrees() - getHeading().getDegrees() < SwerveConstants.TOLERANCE);
+                    SmartDashboard.putNumber("AimAtYaw/TargetYaw", yaw.get().getDegrees());
+                    SmartDashboard.putNumber("AimAtYaw/CurrentYaw", getHeading().getDegrees());
+                }).until(() -> Math.abs(yaw.get().getDegrees() - getHeading().getDegrees()) < SwerveConstants.TOLERANCE)
+                .andThen(new InstantCommand(() -> {
+                    setChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(0,
+                            0,
+                            0,
+                            getHeading())
+                    );
+                }));
     }
 
     public Command aimAtFeed() {

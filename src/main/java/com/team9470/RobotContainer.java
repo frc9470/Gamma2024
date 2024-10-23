@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.team9470.subsystems.*;
 import com.team9470.subsystems.vision.Vision;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,19 +18,43 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
 public class RobotContainer {
+    // wpilib class; we just ask the xbox controller what buttons are being pressed
+    // and they let us know!
     private final CommandXboxController xboxController = new CommandXboxController(0);
 
+
+
+    // // SUBSYSTEMS
+
     private final Swerve swerve = Swerve.getInstance();
-    private final Hood hood = Hood.getInstance();
-    private final Shooter shooter = Shooter.getInstance();
-    private final IntakeArm intakeArm = IntakeArm.getInstance();
-    private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
-    private final Indexer indexer = Indexer.getInstance();
-    private final Vision vision = Vision.getInstance();
+
+
+    // INTAKE ECOSYSTEM
+
+    private final Ampevator ampevator = Ampevator.getInstance();
 
     private final Superstructure superstructure = new Superstructure();
 
+    private final IntakeRollers intakeRollers = IntakeRollers.getInstance();
+
+    private final Indexer indexer = Indexer.getInstance();
+
+    private final Shooter shooter = Shooter.getInstance();
+    private final Hood hood = Hood.getInstance();
+
+
+
+    // SENSORS
+
+    private final Vision vision = Vision.getInstance();
+
+
+    // ADDITIONAL CONTROLLERS
+
     private final SendableChooser<Command> autoChooser;
+
+
+
     public RobotContainer()
     {
         initPathplanner();
@@ -38,12 +63,21 @@ public class RobotContainer {
         SmartDashboard.putData("AutoChooser", autoChooser);
     }
 
+    /**
+     * adds functions that can be called during our autons / paths
+     */
     private void initPathplanner() {
         NamedCommands.registerCommand("intake", superstructure.intakeNote());
         NamedCommands.registerCommand("shoot", superstructure.autonShot());
     }
 
-    private void configureBindings() {
+    /**
+     * binds specific buttons within the {@link #xboxController}
+     * to specific functionalities within the robot's subsystems
+     */
+    private void configureBindings()
+    {
+        // swerve
         swerve.setDefaultCommand(
                 swerve.driveCommand(
                         () -> -MathUtil.applyDeadband(xboxController.getLeftY(),
@@ -56,22 +90,24 @@ public class RobotContainer {
         );
 
         xboxController.leftBumper().whileTrue(superstructure.intakeNote());
-        xboxController.rightBumper().whileTrue(superstructure.feedShot());
+        xboxController.rightBumper().whileTrue(superstructure.intakeAmp());
         xboxController.rightTrigger().whileTrue(superstructure.staticShot(Superstructure.ShotType.SUBWOOFER));
-        xboxController.leftTrigger().whileTrue(superstructure.ampShot());
+        xboxController.leftTrigger().whileTrue(superstructure.ampNote());
 
-        xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
-        xboxController.povLeft().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM_SIDE));
-        xboxController.povRight().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM_SIDE));
-        xboxController.povDown().whileTrue(superstructure.staticShot(Superstructure.ShotType.AUTO));
+        xboxController.povDown().onTrue(ampevator.home());
+        xboxController.povLeft().whileTrue(ampevator.toTarget(0));
+        xboxController.povRight().whileTrue(ampevator.toTarget(Units.inchesToMeters(5)));
+        xboxController.povUp().whileTrue(ampevator.toTarget(Units.inchesToMeters(18)));
+
+//      xboxController.povUp().whileTrue(superstructure.staticShot(Superstructure.ShotType.PODIUM));
 
         xboxController.a().onTrue(new InstantCommand(swerve::zeroGyroWithAlliance));
 
         xboxController.x().whileTrue(superstructure.reverse());
-        xboxController.y().whileTrue(indexer.beltForward());
-        xboxController.b().whileTrue(intakeRollers.intakeOut());
+        xboxController.y().whileTrue(superstructure.shootNote());
+        //xboxController.b().whileTrue(superstructure.climb());
 
-
+        // TESTING COMMANDS
 //        xboxController.x().whileTrue(
 //                        shooter.getQuasistatic(SysIdRoutine.Direction.kForward)
 //        );
@@ -86,17 +122,7 @@ public class RobotContainer {
 //        );
 //        xboxController.povUp().whileTrue(hood.angleCommand(1));
 //        xboxController.povDown().whileTrue(hood.angleCommand(.4));
-//        xboxController.povUp().whileTrue(intakeArm.intakeUp());
-//        xboxController.povDown().whileTrue(intakeArm.intakeDown());
 //        xboxController.povRight().whileTrue(intakeRollers.intakeIn());
-//
-//        xboxController.x().whileTrue(
-//                intakeArm.getQuasistatic(SysIdRoutine.Direction.kForward).andThen(new WaitCommand(1))
-//                        .andThen(intakeArm.getQuasistatic(SysIdRoutine.Direction.kReverse)).andThen(new WaitCommand(1))
-//                        .andThen(intakeArm.getDynamic(SysIdRoutine.Direction.kForward)).andThen(new WaitCommand(1))
-//                        .andThen(intakeArm.getDynamic(SysIdRoutine.Direction.kReverse))
-//        );
-//
 //        xboxController.y().whileTrue(
 //                swerve.sysIdAngleMotorCommand()
 //        );
@@ -105,22 +131,16 @@ public class RobotContainer {
 //                swerve.sysIdDriveMotorCommand()
 //        );
     }
-    
-    
+
+    /**
+     * returns the auton that is currently selected on the auton selector;
+     * that is, the auton that would theoretically run if the robot was
+     * enabled
+     *
+     * @return {@link Command}
+     */
     public Command getAutonomousCommand()
     {
         return autoChooser.getSelected();
     }
 }
-
-/*
- * good autos
- * full field localization
- * control theory - how to move arms
- * shooter regression
- *
- * basic robot functions with states
- *  - swerve
- *  - intake
- *  - shooter
- */

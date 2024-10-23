@@ -1,10 +1,7 @@
 package com.team9470;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.ejml.data.Complex_F64;
@@ -116,6 +113,10 @@ public class LogUtil {
     }
 
     public static void periodicWarning(Supplier<Boolean> trigger, String message) {
+        periodicLogs.put(trigger, message);
+    }
 
+    public static void recordTransform3d(String s, Transform3d transform) {
+        recordPose3d(s, new Pose3d(transform.getTranslation(), transform.getRotation()));
     }
 }

@@ -14,8 +14,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.util.ArrayList;
@@ -24,75 +24,84 @@ import java.util.Optional;
 
 public class VisionDevice {
 
-    private final PhotonCamera photonCamera;
+    private final DeltaPhotonCamera photonCamera;
     private final PhotonPoseEstimator photonPoseEstimator;
     private static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
 
     public VisionDevice(String name, Transform3d transform) {
-        this.photonCamera = new PhotonCamera(name);
+        this.photonCamera = new DeltaPhotonCamera(name);
         photonPoseEstimator = new PhotonPoseEstimator(
                 aprilTagFieldLayout,
                 PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                photonCamera,
                 transform// Robot to camera transform (adjust as needed)
         );
         photonPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
 
     }
 
+    // ONLY CALL ONCE PER CAMERA PER ROBOT LOOP
+    private int heartbeat = 0;
     public void updatePosition(Swerve swerve) {
-        Optional<EstimatedRobotPose> posEstimate = getPosEstimate();
-        if (posEstimate.isEmpty()) {
-            return;
-        }
+        SmartDashboard.putNumber("Vision/" + photonCamera.getName() + "/Heartbeat", heartbeat++);
+        LogUtil.recordTransform3d("Vision/" + photonCamera.getName() + "/Robot to Camera Transform", photonPoseEstimator.getRobotToCameraTransform());
 
-        EstimatedRobotPose estimatedPose = posEstimate.get();
-        Pose3d robotPose = estimatedPose.estimatedPose;
-        Pose3d cameraPose = robotPose.plus(photonPoseEstimator.getRobotToCameraTransform());
-        double timestamp = estimatedPose.timestampSeconds;
+        List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
+        SmartDashboard.putNumber("Vision/" + photonCamera.getName() + "/results", results.size());
+        for (PhotonPipelineResult result : results) {
+//            PhotonPipelineResult result = photonCamera.getLatestResult();
+            Optional<EstimatedRobotPose> posEstimate = photonPoseEstimator.update(result);
+            if (posEstimate.isEmpty()) {
+                return;
+            }
 
-        if(photonCamera.getLatestResult().getTargets().size() < 2){
-            if (photonCamera.getLatestResult().getTargets().get(0).getPoseAmbiguity() > 0.2) return;
-        }
+            EstimatedRobotPose estimatedPose = posEstimate.get();
+            Pose3d robotPose = estimatedPose.estimatedPose;
+            Pose3d cameraPose = robotPose.plus(photonPoseEstimator.getRobotToCameraTransform());
+            double timestamp = estimatedPose.timestampSeconds;
 
-        double std_dev_multiplier = 1.0;
+            if (result.getTargets().size() < 2) {
+                if (result.getTargets().get(0).getPoseAmbiguity() > 0.2) return;
+            }
 
-        List<Pose3d> tagPoses = new ArrayList<>();
+            double std_dev_multiplier = 1.0;
 
-        // Add all tag poses to the list
-        for (PhotonTrackedTarget target : photonCamera.getLatestResult().getTargets()) {
-            int tagId = target.getFiducialId();
-            Optional<Pose3d> tagPose = FieldLayout.kTagMap.getTagPose(tagId);
-            tagPose.ifPresent(tagPoses::add);
-        }
+            List<Pose3d> tagPoses = new ArrayList<>();
 
-        if (tagPoses.isEmpty()) {
-            return;
-        }
+            // Add all tag poses to the list
+            for (PhotonTrackedTarget target : result.getTargets()) {
+                int tagId = target.getFiducialId();
+                Optional<Pose3d> tagPose = FieldLayout.kTagMap.getTagPose(tagId);
+                tagPose.ifPresent(tagPoses::add);
+            }
 
-        // Calculate distances and statistics
-        Pair<Double, Double> distanceStats = calculateDistanceStatistics(tagPoses, cameraPose);
-        double lowestDist = distanceStats.getFirst();
-        double avgDist = distanceStats.getSecond();
+            if (tagPoses.isEmpty()) {
+                return;
+            }
 
-        // Estimate standard deviation of vision measurement
-        double xyStdDev = calculateXYStandardDeviation(lowestDist, avgDist, tagPoses.size(), std_dev_multiplier);
+            // Calculate distances and statistics
+            Pair<Double, Double> distanceStats = calculateDistanceStatistics(tagPoses, cameraPose);
+            double lowestDist = distanceStats.getFirst();
+            double avgDist = distanceStats.getSecond();
 
-        // Log vision data
-        logVisionData(tagPoses, xyStdDev, cameraPose.toPose2d(), robotPose.toPose2d(), timestamp);
+            // Estimate standard deviation of vision measurement
+            double xyStdDev = calculateXYStandardDeviation(lowestDist, avgDist, tagPoses.size(), std_dev_multiplier);
 
-        if (Vision.getInstance().isVisionDisabled()) {
-            return;
-        }
+            // Log vision data
+            logVisionData(tagPoses, xyStdDev, cameraPose.toPose2d(), robotPose.toPose2d(), timestamp);
 
-        // Update robot state with vision data
-        swerve.addVisionMeasurement(robotPose.toPose2d(), timestamp, new Matrix<>(Nat.N3(), Nat.N1(), new double[]{xyStdDev, xyStdDev, 0.02}));
+            if (Vision.getInstance().isVisionDisabled()) {
+                return;
+            }
 
-        // Calculate and log rotation
-        //double rotationDegrees = calculateRotation(pose, Swerve.isRedAlliance());
+            // Update robot state with vision data
+            swerve.addVisionMeasurement(robotPose.toPose2d(), timestamp, new Matrix<>(Nat.N3(), Nat.N1(), new double[]{xyStdDev, xyStdDev, xyStdDev}));
+
+            // Calculate and log rotation
+//            double rotationDegrees = calculateRotation(pose, Swerve.isRedAlliance());
+
 //        logRotation(rotationDegrees);
-
+        }
     }
 
     private Pair<Double, Double> calculateDistanceStatistics(List<Pose3d> tagPoses, Pose3d cameraPose) {
@@ -150,18 +159,10 @@ public class VisionDevice {
 //    }
 
     /**
-     * Get the current pose estimate from the Photon Camera
-     * @return The current pose estimate
-     */
-    public Optional<EstimatedRobotPose> getPosEstimate() {
-        return photonPoseEstimator.update();
-    }
-
-    /**
      * Get the Photon Camera object
      * @return The Photon Camera object
      */
-    public PhotonCamera returnCam() {
+    public DeltaPhotonCamera returnCam() {
         return photonCamera;
     }
 

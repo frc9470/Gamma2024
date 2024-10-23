@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.team9470.Consts.IntakeConstants.*;
 
+/**
+ * Gets notes from the floor into the intake ecosystem
+ */
 public class IntakeRollers extends SubsystemBase {
     private static IntakeRollers instance;
     public final CANSparkMax intakeRollerMotor = new CANSparkMax(INTAKE_ROLLER_ID, CANSparkMax.MotorType.kBrushless);
@@ -30,7 +33,7 @@ public class IntakeRollers extends SubsystemBase {
     }
 
     public Command intakeIn(){
-        return this.runEnd(() -> setVoltage(INTAKE_TAKE_IN_VOLTAGE.get()), () -> setVoltage(0f));
+        return this.runEnd(() -> setVoltage(INTAKE_TAKE_IN_VOLTAGE), () -> setVoltage(0f));
     }
 
     public Command intakeStop (){
@@ -38,6 +41,6 @@ public class IntakeRollers extends SubsystemBase {
     }
 
     public Command intakeOut(){
-        return this.runEnd(() -> setVoltage(-INTAKE_TAKE_IN_VOLTAGE.get()), () -> setVoltage(0f));
+        return this.runEnd(() -> setVoltage(-INTAKE_TAKE_IN_VOLTAGE), () -> setVoltage(0f));
     }
 }
