@@ -72,7 +72,7 @@ public class Consts {
 
     public static class SwerveConstants {
         public static final double MAX_SPEED = Units.feetToMeters(16.6); // TODO: is 80% of free speed correct?
-        public static final double TOLERANCE = 1; // degrees
+        public static final double TOLERANCE = 2; // degrees
         public static final double DEADBAND = 0.1;
     }
 

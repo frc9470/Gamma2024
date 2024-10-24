@@ -55,7 +55,7 @@ public class Superstructure extends SubsystemBase {
 
     // RUNTIME VARIABLES
 
-    public ShotType defaultType = ShotType.AUTO;
+    public ShotType defaultType = ShotType.STEADY;
     public ShotType shotType = defaultType;
 
     // RUNTIME VARIABLES
@@ -139,7 +139,7 @@ public class Superstructure extends SubsystemBase {
     public Command intakeNote(){
         return intakeRollers.intakeIn()
                     .alongWith(indexer.beltThrough()).until(indexer::hasNote)
-                .andThen(indexer.beltThrough().alongWith(intakeRollers.intakeIn()).withTimeout(.3))
+//                .andThen(indexer.beltThrough().alongWith(intakeRollers.intakeIn()).withTimeout(.3))
                 .andThen(
                         indexer.beltStop().alongWith(intakeRollers.intakeStop())
                 )
@@ -151,19 +151,21 @@ public class Superstructure extends SubsystemBase {
 
     public Command shootNote(){
         return new SequentialCommandGroup(
+                new InstantCommand(() -> shotType = ShotType.AUTO),
                 new InstantCommand(() -> System.out.println("Shooting, shotparameters " + parameters)),
                 new ParallelCommandGroup(
+                    swerve.aimAtYaw(() -> parameters != null ? parameters.heading() : new Rotation2d()).onlyIf(() -> parameters != null),
                     // wait for shooter to spin up
 //                    shooter.waitReady(),
                     // wait for hood to get to correct angle
-                    hood.waitReady(),
-                    // wait for heading to update
-                    swerve.aimAtYaw(() -> parameters != null ? parameters.heading() : new Rotation2d()).onlyIf(() -> parameters != null)
+                    hood.waitReady()
+
                 ),
                 indexer.beltMaxForward().until(() -> !indexer.hasNote()),
                 new WaitCommand(0.3),
-                indexer.beltStop()
-        );
+                indexer.beltStop(),
+                new InstantCommand(() -> shotType = defaultType)
+        ).handleInterrupt(() -> shotType = defaultType);
     }
 
     public Command staticShot(ShotType type){
